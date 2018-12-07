@@ -1,0 +1,17 @@
+  holiday:
+    name: Holiday Lighting
+    options:
+      - None
+      - Valentine's Day
+      - St. Patrick's Day
+      - Easter
+      - Memorial Day
+      - Independence Day
+      - Labor Day
+      - Halloween
+      - Veterans Day
+      - Thanksgiving
+      - Christmas
+      - Red Sox Game
+      - Patriots Game
+    icon: mdi:gift

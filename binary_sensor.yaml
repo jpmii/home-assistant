@@ -1,0 +1,22 @@
+  - platform: workday
+    country: US
+    province: CA
+    
+  - name: 'livingroom_tv'
+    platform: 'bayesian'
+    prior: 0.5
+    probability_threshold: 0.8
+    observations:
+      - entity_id: 'group.household'
+        prob_given_true: 0.2
+        prob_given_false: 0
+        platform: 'state'
+        to_state: 'home'
+      - entity_id: 'media_player.samsung_tv_remote'
+        prob_given_true: 0.85
+        platform: 'state'
+        to_state: 'on'
+      - entity_id: 'media_player.living_room_tv'
+        prob_given_true: 0.85
+        platform: 'state'
+        to_state: 'on'

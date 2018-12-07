@@ -1,0 +1,12 @@
+  - platform: generic
+    still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?station=BOX&brand=wui&num=6&delay=15&type=N0R&frame=0&scale=1.000&noclutter=1&showstorms=0&mapx=400&mapy=240&centerx=400&centery=240&transx=0&transy=0&showlabels=1&severe=0&rainsnow=1&lightning=1&smooth=1&rand=25536562&lat=0&lon=0&label=you
+    name: BOS Weather Radar
+  - platform: generic
+    still_image_url: http://www.dot.ri.gov/img/travel/camimages/37-5%20Rt%2037%20W%20@%20Post%20Rd.jpg
+    name: RT. 37 Towards Warwick
+  - platform: generic
+    still_image_url: http://dot.ri.gov/img/travel/camimages/37-1%20Rt%2037%20W%20@%20I-295.jpg
+    name: 295 Exit 1
+  - platform: generic
+    still_image_url: http://dot.ri.gov/img/travel/camimages/295-06.4-M-CAM%20Exit%206%20-%20Rt%2014.jpg
+    name: 295 Exit 6

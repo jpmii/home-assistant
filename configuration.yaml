@@ -1,0 +1,152 @@
+homeassistant:
+  name: Home
+  latitude: !secret home_lat
+  longitude: !secret home_long
+  elevation: !secret home_elevation
+  unit_system: imperial
+  time_zone: America/New_York
+  customize: !include misc/customize.yaml
+
+frontend:
+  extra_html_url:
+    - /local/custom_ui/state-card-floorplan.html
+# Enables configuration UI
+config:
+
+http:
+  base_url: 120june.duckdns.org
+  server_port: 443
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
+
+device_tracker:
+  - platform: ping
+    interval_seconds: 30
+    consider_home: 1200
+    hosts:
+      me_android: 192.168.1.151
+      wife_iphone: 192.168.1.152
+  - platform: gpslogger
+    password: !secret gpslogger_password
+
+media_player:
+  - platform: samsungtv
+    host: 192.168.1.171
+    port: 8001
+    mac: 64:1c:b0:1f:39:63
+    
+zwave:
+  usb_path: /dev/ttyACM0
+  network_key: "0x84, 0xEA, 0x5D, 0xCF, 0x28, 0xFC, 0x1F, 0x6B, 0x7C, 0xD1, 0xF3, 0xDD, 0xDE, 0xA6, 0x3D, 0xB2"
+  
+notify:
+  - platform: joaoapps_join
+    name: all
+    device_id: group.all
+    api_key: !secret join_api
+  - platform: joaoapps_join
+    device_id: !secret join_device_id_me
+    name: me
+    api_key: !secret join_api
+  - platform: rest
+    name: alexa
+    message_param_name: notification
+    resource: https://api.notifymyecho.com/v1/NotifyMe
+    data:
+      accessCode: !secret alexa_notifyme_access_code
+  - platform: group
+    name: me_alexa
+    services:
+      - service: alexa
+      - service: me
+joaoapps_join:
+  - name: s8
+    device_id: !secret join_device_id_me
+    api_key: !secret join_api
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+# Sensors
+binary_sensor: !include binary_sensor.yaml
+sensor: !include sensors.yaml
+
+#Graph
+history_graph:
+  gr1:
+    name: Temperature Graph
+    entities:
+      - sensor.dark_sky_temperature
+      - sensor.zooz_zse40_4in1_sensor_temperature
+    hours_to_show: 240
+    refresh: 60
+  gr2:
+    name: Humidity Graph
+    entities:
+      - sensor.dark_sky_humidity
+      - sensor.zooz_zse40_4in1_sensor_relative_humidity
+    hours_to_show: 240
+    refresh: 60
+weather:
+  - platform: darksky
+    api_key: !secret darksky_api
+# Text to speech
+tts:
+  - platform: google
+
+# Cloud
+cloud: !include cloud.yaml
+
+tuya:
+  username: !secret tuya_user
+  password: !secret tuya_pass
+  country_code: US
+  platform: smart_life
+
+# cast:
+  # media_player:
+  # - host: 192.168.1.233
+  # - host: 192.168.1.162
+  # - host: 192.168.1.154
+
+group: !include groups.yaml
+camera: !include cameras.yaml
+scene: !include_dir_merge_list scene
+automation: !include_dir_merge_list automation
+input_boolean: !include input_boolean.yaml
+input_select: !include input_select.yaml
+script: !include scripts.yaml
+zone: !include zones.yaml
+timer:
+  dryer:
+    name: Dryer Timer
+    duration: '00:80:00'
+    icon: mdi:washing-machine
+
+# logger:
+  # default: info
+  # logs:
+    # homeassistant.components.media_player.cast: debug

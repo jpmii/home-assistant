@@ -1,0 +1,40 @@
+- id: me_leaving_work_alexa
+  alias: "I Just Left Work"
+  trigger:
+    platform: zone
+    entity_id: device_tracker.me_phone
+    zone: zone.work
+    event: leave
+  condition:
+    - condition: and
+      conditions:
+        - condition: state
+          entity_id: 'binary_sensor.workday_sensor'
+          state: 'on'
+        - condition: time
+          after: '15:30:00'
+  action:
+    - service: notify.me_alexa
+      data_template:
+        message: "Daddy just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
+        title: "Arrive at Home"
+        data: {"icon":"http://goo.gl/AU4Wf1"}
+    - service: joaoapps_join.s8_send_sms
+      data_template:
+        message: "Daddy just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
+        number: !secret wife_phone
+- id: im_going_to_work
+  alias: "I'm Going to Work"
+  trigger:
+    platform: time
+    at: '07:45:00'
+  condition:
+    - condition: state
+      entity_id: 'binary_sensor.workday_sensor'
+      state: 'on'
+  action:
+    - service: notify.me
+      data:
+        title: "Arrive at Work"
+        message: "{{states.sensor.my_morning_commute.state}} minutes to get to work."
+        data: {"icon":"http://goo.gl/AU4Wf1"}

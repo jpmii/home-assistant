@@ -1,0 +1,8 @@
+  - name: Christmas Time
+    entities:
+      switch.68102802dc4f22ef95b7:
+        state: on
+  - name: Bah Humbug
+    entities:
+      switch.68102802dc4f22ef95b7:
+        state: off

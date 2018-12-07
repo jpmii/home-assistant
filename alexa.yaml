@@ -1,0 +1,58 @@
+  turnofftvintent:
+    speech:
+      text: !include alexa_confirm.yaml
+    action:
+      - service_template: >
+          {%- if OnOff == 'off' -%}
+            media_player.turn_off
+          {%- else -%}
+            media_player.turn_on
+          {%- endif -%}
+        data_template:
+          entity_id: media_player.samsung_tv_remote
+      - service_template: >
+          {%- if OnOff == 'off' -%}
+            media_player.turn_off
+          {%- else -%}
+            media_player.turn_on
+          {%- endif -%}
+        data_template:
+          entity_id: media_player.samsung_tv_remote
+    card:
+      type: simple
+      title: Jarvis TV Control
+      content: Turn TV {{ OnOff }}
+  
+  volumetvintent:
+    speech:
+      text: !include alexa_confirm.yaml
+    action:
+      - service: media_player.volume_set
+        data_template:
+          entity_id: media_player.samsung_tv_remote
+          volume_level: > 
+            {{ ( Volume|float / 100.0 )|round(2) }}
+    card:
+      type: simple
+      title: Jarvis TV Volume
+      content: Set volume
+      
+  volumemuteintent:
+    action:
+      service: media_player.volume_mute
+      data_template:
+        entity_id: media_player.samsung_tv_remote
+        is_volume_muted: >
+          {% if is_state('binary_sensor.livingroom_tv', 'on')  %}
+            {% if DoWhat.lower() in ['mute'] %}
+              true
+            {% elif DoWhat.lower() in ['unmute'] %}
+              false
+            {% else %}
+              false
+            {% endif %}
+          {% else %}
+            false
+          {% endif %}
+    speech:
+      text: !include alexa_confirm.yaml

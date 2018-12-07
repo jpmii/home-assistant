@@ -1,0 +1,166 @@
+title: My Awesome Home
+# Exclude entities from "Unused entities" view
+excluded_entities:
+  - weblink.router
+views:
+    # Specify a tab icon if you want the view tab to be an icon.
+  - icon: mdi:home-assistant
+    # Title of the view. Will be used as the tooltip for tab icon
+    title: Home Overview
+    cards:
+        # Entities card will take a list of entities and show their state.
+      - type: entities
+        # Title of the entities card
+        title: Modes
+        # The entities here will be shown in the same order as specified.
+        # Each entry is an entity ID or a map with extra options.
+        entities:
+          - input_boolean.disable_home_away
+          - input_boolean.vacation_mode
+          - input_select.holiday
+
+        # The markdown card will render markdown text.
+      - type: entities
+        title: Batteries
+        entities:
+          - sensor.zooz_motion_battery
+          - sensor.basement_smoke_alarm_battery
+      - type: entities
+        title: Household
+        entities:
+          - device_tracker.wife_iphone
+          - device_tracker.me_phone
+      - type: entity-filter
+        entities:
+          - switch.ge_26931_smart_motion_switch_switch
+          - switch.ge_26931_smart_motion_switch_switch_2
+          - light.hank_hkzwrgb01_rgb_bulb_level
+          - switch.68102802dc4f22ef95b7
+          - light.kids_light
+          - switch.ge_26931_smart_motion_switch_switch_3
+          - switch.ge_26931_smart_motion_switch_switch_4
+          - switch.ge_14284_outdoor_smart_switch_switch
+        state_filter:
+          - "on"
+        card: 
+          type: glance
+          title: Lights On
+  - title: Living Room
+    cards:
+      - type: entities
+        title: Lights
+        entities:
+          - light.hank_hkzwrgb01_rgb_bulb_level
+          - switch.68102802dc4f22ef95b7
+      - type: glance
+        title: Living Room TV
+        entities:
+          - binary_sensor.livingroom_tv
+      - type: media-control
+        title: Living Room Chromecast
+        entity: media_player.living_room_tv 
+      - type: media-control
+        title: Samsung TV
+        entity: media_player.samsung_tv_remote
+  - title: Master Bedroom
+    cards:
+      - type: media-control
+        title: Parent's Bedroom Chromecast
+        entity: media_player.parents_bedroom_tv
+      - type: entities
+        title: Closet
+        entities:
+          - sensor.ge_motion_detect_bedroom_closet
+          - switch.ge_26931_smart_motion_switch_switch_3
+          - switch.ge_26931_smart_motion_switch_switch_4
+  - title: Back Bedroom
+    cards:
+      - type: entities
+        title: Light
+        entities:
+          - light.kids_light
+  - title: Basement
+    cards:
+      - type: entities
+        title: Basement Stairs
+        entities:
+          - sensor.ge_motion_detect_template
+          - switch.ge_26931_smart_motion_switch_switch
+          - switch.ge_26931_smart_motion_switch_switch_2
+      - type: entities
+        title: Basement Hall
+        entities:
+          - sensor.basement_smoke_detector
+          - sensor.zooz_motion_detect_template
+          - sensor.zooz_zse40_4in1_sensor_temperature
+          - sensor.zooz_zse40_4in1_sensor_relative_humidity
+          - sensor.zooz_motion_battery
+          - sensor.basement_smoke_alarm_battery
+      - type: entities
+        title: Laundry Room
+        entities:
+          - timer.dryer
+      - type: entities
+        title: Play Room
+        entities:
+          - media_player.basement_tv
+      - type: history-graph
+        title: 'Basement Temperature Graph'
+        hours_to_show: 240
+        refresh: 60
+        entities:
+          - sensor.zooz_zse40_4in1_sensor_temperature
+          - sensor.dark_sky_temperature
+      - type: history-graph
+        title: 'Basement Humidity Graph'
+        hours_to_show: 240
+        refresh: 60
+        entities:
+          - sensor.zooz_zse40_4in1_sensor_relative_humidity
+          - sensor.dark_sky_humidity
+  - title: Outside
+    cards:
+      - type: entities
+        title: Right Side Yard
+        entities:
+          - switch.ge_14284_outdoor_smart_switch_switch
+  - icon: mdi:weather-partlycloudy
+    title: Weather
+    cards:
+      - type: picture-entity
+        entity: camera.bos_weather_radar
+      - type: weather-forecast
+        entity: weather.dark_sky
+      - type: entities
+        title: Sensors
+        entities:
+            - sun.sun
+            - sensor.moon
+            - sensor.dark_sky_temperature
+            - sensor.dark_sky_apparent_temperature
+            - sensor.dark_sky_humidity
+            - sensor.dark_sky_cloud_coverage
+            - sensor.dark_sky_precip
+            - sensor.dark_sky_precip_probability
+            - sensor.dark_sky_precip_intensity
+            - sensor.dark_sky_nearest_storm_distance
+            - sensor.dark_sky_wind_speed
+            - sensor.dark_sky_wind_bearing
+            - sensor.dark_sky_visibility
+            - sensor.dark_sky_ozone
+            - sensor.dark_sky_pressure
+            - sensor.dark_sky_dew_point
+  - icon: mdi:traffic-light
+    title: Traffic
+    cards:
+      - type: glance
+        title: Commute Times
+        entities:
+          - sensor.my_morning_commute
+          - sensor.my_evening_commute
+      - type: picture-entity
+        entity: camera.rt_37_towards_warwick
+      - type: picture-entity
+        entity: camera.295_exit_1
+      - type: picture-entity
+        entity: camera.295_exit_6

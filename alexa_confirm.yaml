@@ -1,0 +1,17 @@
+          >
+          {{ [
+          "Roger That",
+          "Sure",
+          "If you insist",
+          "Done",
+          "No worries",
+          "I can do that",
+          "Leave it to me",
+          "Consider it done",
+          "As you wish",
+          "By your command",
+          "Affirmative",
+          "I will",
+          "As you decree, so shall it be",
+          "No Problem"
+          ] | random }} 

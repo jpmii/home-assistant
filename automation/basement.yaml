@@ -1,0 +1,48 @@
+- id: basement_hall_motion
+  alias: "Motion Detected in Basement Hall - Turn on Stair Lights"
+  initial_state: True
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: sensor.zooz_motion_detect_template
+      from: "standby"
+      to: "motion detected"
+  action:
+    service: switch.turn_on
+    entity_id: switch.ge_26931_smart_motion_switch_switch_2
+- alias: Turn off basement stairs light 3 minutes after last movement
+  trigger:
+    platform: state
+    entity_id: sensor.zooz_motion_detect_template
+    to: 'standby'
+    for:
+      minutes: 3
+  action:
+    service: switch.turn_off
+    entity_id: switch.ge_26931_smart_motion_switch_switch_2
+- alias: Dryer Timer stop
+  id: 'dryerstop'
+  trigger: 
+  - platform: event
+    event_type: timer.finished
+    event_data: 
+      entity_id: timer.dryer
+  action:
+  - service: notify.me_alexa
+    data:
+      message: "The dryer has finished"
+  - service: joaoapps_join.s8_send_sms
+    data_template:
+      message: "The dryer has finished"
+      number: !secret wife_phone
+- alias: Motion in Basement Hallway
+  trigger:
+    platform: event
+    event_type: ifttt_webhook_received
+    event_data:
+      action: call_service
+  action:
+    service: notify.me
+    data_template:
+      title: "Motion!"
+      message: '{{ trigger.event.data.message }}'

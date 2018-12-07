@@ -1,0 +1,19 @@
+- alias: Turn on bedroom closet light
+  trigger:
+    platform: state
+    entity_id: sensor.ge_motion_detect_bedroom_closet
+    from: 'standby'
+  action:
+    service: switch.turn_on
+    entity_id: switch.ge_26931_smart_motion_switch_switch_3
+    
+- alias: Turn off bedroom closet light 3 minutes after last movement
+  trigger:
+    platform: state
+    entity_id: sensor.ge_motion_detect_bedroom_closet
+    to: 'standby'
+    for:
+      minutes: 3
+  action:
+    service: switch.turn_off
+    entity_id: switch.ge_26931_smart_motion_switch_switch_3

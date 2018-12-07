@@ -1,0 +1,24 @@
+#Home
+  - name: Home
+    latitude: !secret home_lat
+    longitude: !secret home_long
+    radius: 100
+    icon: mdi:house
+#Work
+  - name: Work
+    latitude: !secret work_lat
+    longitude: !secret work_long
+    radius: 300
+    icon: mdi:briefcase
+#School
+  - name: School
+    latitude: !secret school_lat
+    longitude: !secret school_long
+    radius: 100
+    icon: mdi:school
+#Parents
+  - name: Parents
+    latitude: !secret myparents_lat
+    longitude: !secret myparents_long
+    radius: 100
+    icon: mdi:home-outline

@@ -1,0 +1,12 @@
+  me_location:
+    name: My Location
+    view: false
+    entities:
+      - device_tracker.me_android
+      - device_tracker.me_phone
+  livingroom_lights:
+    name: Livingroom Lights
+    view: false
+    entities:
+      - light.hank_hkzwrgb01_rgb_bulb_level
+      - switch.68102802dc4f22ef95b7

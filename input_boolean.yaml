@@ -1,0 +1,9 @@
+##############################################################
+## Input Boolean  ##
+##############################################################
+  vacation_mode:
+    name: Vacation Mode
+    icon: mdi:airplane
+  disable_home_away:
+    name: Disable Home / Away Mode
+    icon: mdi:map-marker-off
