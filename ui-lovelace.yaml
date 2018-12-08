@@ -136,6 +136,7 @@ views:
         entities:
             - sun.sun
             - sensor.moon
+            - sensor.bad_weather_sensor
             - sensor.dark_sky_temperature
             - sensor.dark_sky_apparent_temperature
             - sensor.dark_sky_humidity

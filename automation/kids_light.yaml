@@ -59,7 +59,7 @@
     - service: light.lifx_set_state
       data:
         entity_id:
-         - light.kids_lights
+         - light.kids_light
         brightness: 255
         color_temp: 285
         white_value: 255

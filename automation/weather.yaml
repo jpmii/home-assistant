@@ -10,4 +10,4 @@
       data_template:
         title: "Storm nearby"
         message: "IT GONNA {{ states('sensor.dark_sky_precip') }}. Probability is at {{states.sensor.dark_sky_precip_probability.state}} percent. Nearest storm is {{states.sensor.dark_sky_nearest_storm_distance.state}} miles away."
-        data: {"icon":"http://goo.gl/AU4Wf1"}
+        data: {"icon":"/config/www/gonna_rain.jpg"}
