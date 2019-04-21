@@ -16,12 +16,11 @@
   action:
     - service: notify.me_alexa
       data_template:
-        message: "Daddy just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
+        message: "{{states.sensor.my_name.state}} just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
         title: "Arrive at Home"
-        data: {"icon":"http://goo.gl/AU4Wf1"}
     - service: joaoapps_join.s8_send_sms
       data_template:
-        message: "Daddy just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
+        message: "{{states.sensor.my_name.state}} just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
         number: !secret wife_phone
 - id: im_going_to_work
   alias: "I'm Going to Work"

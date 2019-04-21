@@ -10,3 +10,9 @@
     entities:
       - light.hank_hkzwrgb01_rgb_bulb_level
       - switch.68102802dc4f22ef95b7
+  people:
+    name: People & Devices
+    entities:
+      - device_tracker.me_phone 
+      - device_tracker.me_android
+      - device_tracker.wife_iphone

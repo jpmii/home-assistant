@@ -1,6 +1,6 @@
   light.hank_hkzwrgb01_rgb_bulb_level:
     friendly_name: Living Room Color Light
-    
+
   switch.ge_26931_smart_motion_switch_switch:
     friendly_name: Basement Stairs Switch
   switch.ge_26931_smart_motion_switch_switch_2:
@@ -9,14 +9,18 @@
     friendly_name: Bedroom Closet
   switch.ge_26931_smart_motion_switch_switch_4:
     friendly_name: Bedroom Closet (Motion)
-    
+
   sensor.zooz_zse40_4in1_sensor_temperature:
     friendly_name: Basement Hall Temperature
   sensor.zooz_zse40_4in1_sensor_relative_humidity:
     friendly_name: Basement Hall Humidity
-    
+
   switch.ge_14284_outdoor_smart_switch_switch:
     friendly_name: Right Side Yard Outlet
 
   switch.68102802dc4f22ef95b7:
     friendly_name: Christmas Outlet
+
+  sensor.plex:
+    friendly_name: Plex Activity
+    icon: mdi:plex

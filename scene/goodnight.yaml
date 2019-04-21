@@ -10,3 +10,5 @@
         state: off
       switch.ge_26931_smart_motion_switch_switch_3:
         state: off
+      light.front_door:
+        state: off

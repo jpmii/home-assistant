@@ -10,3 +10,4 @@
   - platform: generic
     still_image_url: http://dot.ri.gov/img/travel/camimages/295-06.4-M-CAM%20Exit%206%20-%20Rt%2014.jpg
     name: 295 Exit 6
+  - platform: ring

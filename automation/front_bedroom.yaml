@@ -1,0 +1,155 @@
+#
+# Kids TV Outlet
+#
+
+- alias: Kids TV off
+  trigger:
+    - platform: time
+      at: '19:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: switch.turn_off
+      entity_id: switch.68102802dc4f22e873fa
+- alias: Kids TV On
+  trigger:
+    - platform: time
+      at: '07:00:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: switch.turn_on
+      entity_id: switch.68102802dc4f22e873fa
+
+#
+# Kids Light
+#
+
+- alias: Kids Light ready to go for school day
+  trigger:
+    - platform: time
+      at: '06:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+    - condition: state
+      entity_id: sensor.off_day
+      state: 'False'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.kids_light
+        brightness: 100
+        color_name: "green"
+        transition: 15
+- alias: Kids Light ready to go for off day
+  trigger:
+    - platform: time
+      at: '07:00:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+    - condition: state
+      entity_id: sensor.off_day
+      state: 'True'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.kids_light
+        brightness: 100
+        color_name: "green"
+        transition: 15
+- alias: Kids Light back to normal
+  trigger:
+    - platform: time
+      at: '07:15:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.kids_light
+        brightness: 255
+        color_temp: 285
+        white_value: 255
+        transition: 15
+- alias: Kids Light turn off
+  trigger:
+    - platform: time
+      at: '07:45:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.kids_light
+        transition: 15
+        power: false
+- alias: Kids Light wind down for bed
+  trigger:
+    - platform: time
+      at: '18:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.kids_light
+        power: True
+        brightness: 25
+        color_temp: 285
+        white_value: 255
+        transition: 15
+- alias: Kids Light warning for bed
+  trigger:
+    - platform: time
+      at: '19:10:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_effect_pulse
+      data:
+        entity_id:
+         - light.kids_light
+        color_name: yellow
+        period: 5
+        cycles: 3
+        mode: breathe
+        power_on: false
+- alias: Kids Light ready for bed
+  trigger:
+    - platform: time
+      at: '19:20:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.kids_light
+        power: True
+        brightness: 5
+        color_temp: 285
+        white_value: 255
+        transition: 15

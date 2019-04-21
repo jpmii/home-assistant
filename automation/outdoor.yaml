@@ -1,0 +1,70 @@
+- alias: Front Door Light On
+  trigger:
+    - platform: sun
+      event: 'sunset'
+      offset: '-00:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.front_door
+        brightness: 255
+        transition: 15
+        power: true
+- alias: Front Door Light Off
+  trigger:
+    - platform: time
+      at: '23:00:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.front_door
+        power: false
+- alias: Front Door Motion Turn off Light
+  trigger:
+    platform: state
+    entity_id: binary_sensor.ring_front_door_motion
+    to: off
+    for:
+      minutes: 5
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: off
+    - condition: time
+      after: '23:00:00'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.front_door
+        power: false
+- alias: Front Door Motion Turn on Light
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.ring_front_door_motion
+      from: off
+      to: on
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+    - condition: time
+      after: '23:00:00'
+  action:
+    - service: light.lifx_set_state
+      data:
+        entity_id:
+         - light.front_door
+        brightness: 255
+        transition: 15
+        power: true

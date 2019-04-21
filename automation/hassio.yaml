@@ -7,6 +7,3 @@
     service: notify.me
     data:
       message: 'Update for Home Assistant is available.'
-      data:
-        push:
-          sound: "Update.wav"

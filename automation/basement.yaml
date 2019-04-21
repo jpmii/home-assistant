@@ -30,10 +30,10 @@
   action:
   - service: notify.me_alexa
     data:
-      message: "The dryer has finished"
+      message: 'The dryer has finished at {{now().strftime("%I:%M %p")}}'
   - service: joaoapps_join.s8_send_sms
     data_template:
-      message: "The dryer has finished"
+      message: 'The dryer has finished at {{now().strftime("%I:%M %p")}}'
       number: !secret wife_phone
 - alias: Motion in Basement Hallway
   trigger:

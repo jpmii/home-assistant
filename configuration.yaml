@@ -7,10 +7,12 @@ homeassistant:
   time_zone: America/New_York
   customize: !include misc/customize.yaml
 
+lovelace:
+  mode: yaml
+  
 frontend:
   extra_html_url:
     - /local/custom_ui/state-card-floorplan.html
-# Enables configuration UI
 config:
 
 http:
@@ -24,16 +26,24 @@ device_tracker:
     interval_seconds: 30
     consider_home: 1200
     hosts:
-      me_android: 192.168.1.151
-      wife_iphone: 192.168.1.152
+      me_android: !secret my_phone_ip
+      wife_iphone: !secret wife_phone_ip
   - platform: gpslogger
     password: !secret gpslogger_password
 
 media_player:
   - platform: samsungtv
-    host: 192.168.1.171
+    host: !secret livingroom_tv_ip
     port: 8001
     mac: 64:1c:b0:1f:39:63
+  - platform: plex
+    entity_namespace: plex
+    include_non_clients: false
+    scan_interval: 1
+    show_all_controls: false
+    use_custom_entity_ids: false
+    use_episode_art: false
+    remove_unavailable_clients: false
     
 zwave:
   usb_path: /dev/ttyACM0
@@ -125,12 +135,18 @@ tuya:
   password: !secret tuya_pass
   country_code: US
   platform: smart_life
+  
+ring:
+  username: !secret ring_username
+  password: !secret ring_password
 
-# cast:
-  # media_player:
-  # - host: 192.168.1.233
-  # - host: 192.168.1.162
-  # - host: 192.168.1.154
+google:
+  client_id: !secret googlecal_id
+  client_secret: !secret googlecal_secret
+  
+# androidtv:
+  # name: Kid's TV
+  # host:
 
 group: !include groups.yaml
 camera: !include cameras.yaml
@@ -143,8 +159,10 @@ zone: !include zones.yaml
 timer:
   dryer:
     name: Dryer Timer
-    duration: '00:80:00'
+    duration: '00:90:00'
     icon: mdi:washing-machine
+
+system_health:
 
 # logger:
   # default: info

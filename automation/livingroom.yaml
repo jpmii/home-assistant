@@ -59,6 +59,8 @@
     conditions:
       - condition: time
         after: '07:00:00'
+      - condition: time
+        before: '23:00:00'
   action:
     service: light.turn_off
     entity_id: light.hank_hkzwrgb01_rgb_bulb_level

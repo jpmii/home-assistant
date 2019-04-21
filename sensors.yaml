@@ -1,5 +1,70 @@
   - platform: yr
   - platform: moon
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'time_date'
+      - 'time_utc'
+      - 'beat'
+  - platform: darksky
+    api_key: !secret darksky_api
+    monitored_conditions:
+      - summary
+      - minutely_summary
+      - hourly_summary
+      - daily_summary
+      #- icon
+      - nearest_storm_distance
+      #- nearest_storm_bearing
+      - precip_type
+      - precip_intensity
+      - precip_probability
+      - temperature
+      - apparent_temperature
+      - dew_point
+      - wind_speed
+      - wind_bearing
+      - cloud_cover
+      - humidity
+      - pressure
+      - visibility
+      - ozone
+  - platform: waze_travel_time
+    name: "My Morning Commute"
+    origin: zone.home
+    destination: zone.work
+    region: 'US'
+  - platform: waze_travel_time
+    name: "My Evening Commute"
+    origin: zone.work
+    destination: zone.home
+    region: 'US'
+  - platform: plex
+    host: !secret plex_ip
+  - platform: template
+    sensors:
+      sunlight_pct:
+        entity_id:
+          - sun.sun
+          - sensor.dark_sky_cloud_coverage
+        value_template: >-
+          {%- set elevation = state_attr('sun.sun','elevation') | float %}
+          {%- set cloud_coverage = states('sensor.dark_sky_cloud_coverage') | float %}
+          {%- set cloud_factor = (1 - (0.75 * ( cloud_coverage / 100) ** 3 )) %}
+          {%- set min_elevation = -6 %}
+          {%- set max_elevation = 90 %}
+          {%- set adjusted_elevation = elevation - min_elevation %}
+          {%- set adjusted_elevation = [adjusted_elevation,0] | max %}
+          {%- set adjusted_elevation = [adjusted_elevation,max_elevation - min_elevation] | min %}
+          {%- set adjusted_elevation = adjusted_elevation / (max_elevation - min_elevation) %}
+          {%- set adjusted_elevation = adjusted_elevation %}
+          {%- set adjusted_elevation = adjusted_elevation * 100 %}
+          {%- set brightness = adjusted_elevation * cloud_factor %}
+          {{ brightness | round }}
+        unit_of_measurement: '%'
+        device_class: 'illuminance'
   - platform: template
     sensors:
       zooz_motion_detect_template:
@@ -41,7 +106,7 @@
         friendly_name: "Bedroom Closet Motion"
         entity_id: sensor.ge_26931_smart_motion_switch_alarm_level_3
       bad_weather_sensor:
-        value_template: "{% if states.sensor.dark_sky_precip_probability.state > '80' and states.sensor.dark_sky_nearest_storm_distance < '6' %}Yes{% else %}No{% endif %}"
+        value_template: "{% if states.sensor.dark_sky_precip_probability.state|float > 80 and states.sensor.dark_sky_nearest_storm_distance.state < '6' %}Yes{% else %}No{% endif %}"
         friendly_name: "Bad Weather"
         icon_template: >-
           {% if is_state("sensor.dark_sky_precip", "rain")%}
@@ -51,63 +116,14 @@
           {% else %}
             mdi:weather-sunny
           {% endif %}
-  - platform: darksky
-    api_key: !secret darksky_api
-    monitored_conditions:
-      - summary
-      - minutely_summary
-      - hourly_summary
-      - daily_summary
-      #- icon
-      - nearest_storm_distance
-      #- nearest_storm_bearing
-      - precip_type
-      - precip_intensity
-      - precip_probability
-      - temperature
-      - apparent_temperature
-      - dew_point
-      - wind_speed
-      - wind_bearing
-      - cloud_cover
-      - humidity
-      - pressure
-      - visibility
-      - ozone
-  - platform: waze_travel_time
-    name: "My Morning Commute"
-    origin: zone.home
-    destination: zone.work
-    region: 'US'
-  - platform: waze_travel_time
-    name: "My Evening Commute"
-    origin: zone.work
-    destination: zone.home
-    region: 'US'
-  - platform: template
-    sensors:
-      sunlight_pct:
-        entity_id:
-          - sun.sun
-          - sensor.dark_sky_cloud_coverage
-        value_template: >-
-          {%- set elevation = state_attr('sun.sun','elevation') | float %}
-          {%- set cloud_coverage = states('sensor.dark_sky_cloud_coverage') | float %}
-          {%- set cloud_factor = (1 - (0.75 * ( cloud_coverage / 100) ** 3 )) %}
-          {%- set min_elevation = -6 %}
-          {%- set max_elevation = 90 %}
-          {%- set adjusted_elevation = elevation - min_elevation %}
-          {%- set adjusted_elevation = [adjusted_elevation,0] | max %}
-          {%- set adjusted_elevation = [adjusted_elevation,max_elevation - min_elevation] | min %}
-          {%- set adjusted_elevation = adjusted_elevation / (max_elevation - min_elevation) %}
-          {%- set adjusted_elevation = adjusted_elevation %}
-          {%- set adjusted_elevation = adjusted_elevation * 100 %}
-          {%- set brightness = adjusted_elevation * cloud_factor %}
-          {{ brightness | round }}
-        unit_of_measurement: '%'
-        device_class: 'illuminance'
-  - platform: template
-    sensors:
+      my_name:
+        value_template: !secret me_name
       ambient_light:
         friendly_name: 'Ambient Light'
         value_template: '{{ "%.2f"|format((states.sun.sun.attributes.elevation/24)*((states.sun.sun.attributes.elevation/24)+(1-(states.sensor.dark_sky_cloud_coverage.state|int/100)))) }}'
+      date_md:
+        entity_id: sensor.date
+        value_template: "{{ now().month }}-{{ now().day }}"
+      off_day:
+        entity_id: sensor.time
+        value_template: "{{'NO SCHOOL' in states.calendar.murphy_calendar.attributes.message or states.binary_sensor.workday_sensor.state == 'off'}}"

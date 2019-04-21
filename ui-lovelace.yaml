@@ -30,6 +30,7 @@ views:
         entities:
           - device_tracker.wife_iphone
           - device_tracker.me_phone
+          - group.people
       - type: entity-filter
         entities:
           - switch.ge_26931_smart_motion_switch_switch
@@ -37,6 +38,7 @@ views:
           - light.hank_hkzwrgb01_rgb_bulb_level
           - switch.68102802dc4f22ef95b7
           - light.kids_light
+          - light.front_door
           - switch.ge_26931_smart_motion_switch_switch_3
           - switch.ge_26931_smart_motion_switch_switch_4
           - switch.ge_14284_outdoor_smart_switch_switch
@@ -45,6 +47,18 @@ views:
         card: 
           type: glance
           title: Lights On
+      - type: entity-filter
+        entities:
+          - switch.68102802dc4f22e873fa
+        state_filter:
+          - "on"
+        card: 
+          type: glance
+          title: Outlet On
+      # - type: picture-entity
+          # entity: sensor.plex
+          # name: Plex
+          # image: /config/www/plex.png
   - title: Living Room
     cards:
       - type: entities
@@ -73,12 +87,16 @@ views:
           - sensor.ge_motion_detect_bedroom_closet
           - switch.ge_26931_smart_motion_switch_switch_3
           - switch.ge_26931_smart_motion_switch_switch_4
-  - title: Back Bedroom
+  - title: Front Bedroom
     cards:
       - type: entities
         title: Light
         entities:
           - light.kids_light
+      - type: entities
+        title: Power
+        entities:
+          - switch.68102802dc4f22e873fa
   - title: Basement
     cards:
       - type: entities
@@ -120,10 +138,20 @@ views:
           - sensor.dark_sky_humidity
   - title: Outside
     cards:
+      - type: picture-glance
+        title: Front Door
+        entities:
+          - binary_sensor.ring_front_door_ding
+          - binary_sensor.ring_front_door_motion
+        camera_image: camera.front_door
       - type: entities
         title: Right Side Yard
         entities:
           - switch.ge_14284_outdoor_smart_switch_switch
+      - type: entities
+        title: Front Yard
+        entities:
+          - light.front_door
   - icon: mdi:weather-partlycloudy
     title: Weather
     cards:
