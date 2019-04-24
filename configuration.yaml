@@ -16,7 +16,7 @@ frontend:
 config:
 
 http:
-  base_url: 120june.duckdns.org
+  base_url: !secret hass_url
   server_port: 443
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
@@ -129,6 +129,8 @@ tts:
 
 # Cloud
 cloud: !include cloud.yaml
+
+#switch: !include switch.yaml
 
 tuya:
   username: !secret tuya_user
