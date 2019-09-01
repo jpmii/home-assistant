@@ -5,9 +5,30 @@
     platform: state
     entity_id: sensor.bad_weather_sensor
     to: "Yes"
+  condition:
+  - condition: state
+    entity_id: 'sensor.sleep_mode'
+    state: 'awake'
   action:
     - service: notify.me
       data_template:
         title: "Storm nearby"
         message: "IT GONNA {{ states('sensor.dark_sky_precip') }}. Probability is at {{states.sensor.dark_sky_precip_probability.state}} percent. Nearest storm is {{states.sensor.dark_sky_nearest_storm_distance.state}} miles away."
         data: {"icon":"/config/www/gonna_rain.jpg"}
+        
+- alias: Lightning Strike Notification
+  id: 'thor_nearby'
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.lightning_active
+    to: "on"
+  condition:
+  - condition: state
+    entity_id: 'sensor.sleep_mode'
+    state: 'awake'
+  action:
+    - service: notify.me
+      data_template:
+        title: "THOR nearby"
+        message: "Lightning strike! Count is at {{states.sensor.count_lightning_strikes.state}}. Nearest storm is {{states.sensor.dark_sky_nearest_storm_distance.state}} miles away."

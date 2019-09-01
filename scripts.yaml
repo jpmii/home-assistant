@@ -3,3 +3,9 @@ dryer_start:
   sequence:
     - service: timer.start
       entity_id: timer.dryer
+kids_light_setup:
+  alias: Setup kids light for bed
+  sequence:
+    - service: automation.trigger
+      entity_id:
+        - automation.kids_light_ready_for_bed

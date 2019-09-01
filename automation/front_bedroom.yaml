@@ -38,15 +38,15 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
     - condition: state
-      entity_id: sensor.off_day
-      state: 'False'
+      entity_id: sensor.school_day
+      state: 'True'
   action:
     - service: light.lifx_set_state
-      data:
+      data_template:
         entity_id:
          - light.kids_light
         brightness: 100
-        color_name: "green"
+        rgb_color: ["{{range(256)|random}}","{{range(256)|random}}","{{range(256)|random}}"]
         transition: 15
 - alias: Kids Light ready to go for off day
   trigger:
@@ -57,15 +57,15 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
     - condition: state
-      entity_id: sensor.off_day
-      state: 'True'
+      entity_id: sensor.school_day
+      state: 'False'
   action:
     - service: light.lifx_set_state
-      data:
+      data_template:
         entity_id:
          - light.kids_light
         brightness: 100
-        color_name: "green"
+        rgb_color: ["{{range(256)|random}}","{{range(256)|random}}","{{range(256)|random}}"]
         transition: 15
 - alias: Kids Light back to normal
   trigger:

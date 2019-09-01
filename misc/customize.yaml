@@ -24,3 +24,8 @@
   sensor.plex:
     friendly_name: Plex Activity
     icon: mdi:plex
+    
+  binary_sensor.dryer_status:
+    icon: mdi:tumble-dryer
+  sensor.top_slider_door:
+    icon: mdi:glassdoor

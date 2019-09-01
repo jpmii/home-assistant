@@ -3,14 +3,14 @@
   alias: Phone battery Warning
   trigger:
     platform: numeric_state
-    entity_id: device_tracker.me_phone
-    value_template: '{{ states.device_tracker.me_phone.attributes.battery }}'
+    entity_id: device_tracker.me_phone_2
+    value_template: '{{ states.device_tracker.me_phone_2.attributes.battery }}'
     below: 10
   condition:
     - condition: template
-      value_template: "{{ states.device_tracker.me_phone.state != 'home' }}"
+      value_template: "{{ states.device_tracker.me_phone_2.state != 'home' }}"
   action:
     - service: joaoapps_join.s8_send_sms
       data_template:
-        message: "Hairy Baby! {{ states.device_tracker.me_phone.attributes.friendly_name }}'s phone battery is low: {{ states.device_tracker.me_phone.attributes.battery }} percent"
+        message: "Hairy Baby! {{ states.device_tracker.me_phone_2.attributes.friendly_name }}'s phone battery is low: {{ states.device_tracker.me_phone_2.attributes.battery }} percent"
         number: !secret wife_phone

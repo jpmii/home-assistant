@@ -33,15 +33,18 @@
   trigger:
     platform: state
     entity_id: binary_sensor.ring_front_door_motion
-    to: off
+    to: 'off'
     for:
       minutes: 5
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
-      state: off
-    - condition: time
-      after: '23:00:00'
+      state: 'off'
+    # - condition: time
+      # after: '23:00:00'
+      # before: '07:00:00'
+    - condition: template
+      value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
   action:
     - service: light.lifx_set_state
       data:
@@ -52,14 +55,17 @@
   trigger:
     - platform: state
       entity_id: binary_sensor.ring_front_door_motion
-      from: off
-      to: on
+      from: 'off'
+      to: 'on'
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
       state: 'off'
-    - condition: time
-      after: '23:00:00'
+    # - condition: time
+      # after: '23:00:00'
+      # before: '07:00:00'
+    - condition: template
+      value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
   action:
     - service: light.lifx_set_state
       data:
@@ -68,3 +74,6 @@
         brightness: 255
         transition: 15
         power: true
+    - service: notify.me
+      data:
+        message: 'Front Door Motion detected at {{now().strftime("%I:%M %p")}}'

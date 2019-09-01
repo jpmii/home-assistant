@@ -28,23 +28,23 @@ device_tracker:
     hosts:
       me_android: !secret my_phone_ip
       wife_iphone: !secret wife_phone_ip
-  - platform: gpslogger
-    password: !secret gpslogger_password
 
 media_player:
   - platform: samsungtv
     host: !secret livingroom_tv_ip
     port: 8001
     mac: 64:1c:b0:1f:39:63
-  - platform: plex
-    entity_namespace: plex
-    include_non_clients: false
-    scan_interval: 1
-    show_all_controls: false
-    use_custom_entity_ids: false
-    use_episode_art: false
-    remove_unavailable_clients: false
-    
+
+person:
+  - name: !secret me_name
+    id: me6789
+    device_trackers:
+      - device_tracker.me_phone
+  - name: !secret wife_name
+    id: wife1234
+    device_trackers:
+      - device_tracker.wife_iphone
+
 zwave:
   usb_path: /dev/ttyACM0
   network_key: "0x84, 0xEA, 0x5D, 0xCF, 0x28, 0xFC, 0x1F, 0x6B, 0x7C, 0xD1, 0xF3, 0xDD, 0xDE, 0xA6, 0x3D, 0xB2"
@@ -125,17 +125,16 @@ weather:
     api_key: !secret darksky_api
 # Text to speech
 tts:
-  - platform: google
+  - platform: google_translate
+    service_name: google_say
 
 # Cloud
 cloud: !include cloud.yaml
 
-#switch: !include switch.yaml
-
 tuya:
   username: !secret tuya_user
   password: !secret tuya_pass
-  country_code: US
+  country_code: 1
   platform: smart_life
   
 ring:
@@ -149,9 +148,15 @@ google:
 # androidtv:
   # name: Kid's TV
   # host:
+  
+wwlln:
+  radius: 100
+  latitude: !secret home_lat
+  longitude: !secret home_long
 
 group: !include groups.yaml
 camera: !include cameras.yaml
+switch: !include switch.yaml
 scene: !include_dir_merge_list scene
 automation: !include_dir_merge_list automation
 input_boolean: !include input_boolean.yaml

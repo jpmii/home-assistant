@@ -1,0 +1,17 @@
+- alias: Top Slider Open or Closed
+  id: 'topslideropenclosed'
+  trigger: 
+  - platform: state
+    entity_id: sensor.top_slider_door
+    to: 'Open'
+  condition:
+  - condition: template
+    value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
+  action:
+  - service: notify.me
+    data:
+      message: 'Slider Door opened at {{now().strftime("%I:%M %p")}}'
+  - service: joaoapps_join.s8_send_sms
+    data_template:
+      message: 'Slider Door opened at {{now().strftime("%I:%M %p")}}'
+      number: !secret wife_phone

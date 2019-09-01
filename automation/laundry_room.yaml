@@ -1,0 +1,28 @@
+- alias: Dryer sense stop
+  id: 'dryersensestop'
+  trigger: 
+  - platform: state
+    entity_id: binary_sensor.dryer_status
+    to: 'off'
+  action:
+  - service: notify.me
+    data:
+      message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
+  - service: joaoapps_join.s8_send_sms
+    data_template:
+      message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
+      number: !secret wife_phone
+# - alias: Dryer sense stop tell Alexa
+  # id: 'dryersensestopalexa'
+  # trigger: 
+  # - platform: state
+    # entity_id: binary_sensor.dryer_status
+    # to: 'off'
+  # condition:
+  # - condition: state
+    # entity_id: 'sensor.sleep_mode'
+    # state: 'awake'
+  # action:
+  # - service: notify.me_alexa
+    # data:
+      # message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'

@@ -20,21 +20,6 @@
   action:
     service: switch.turn_off
     entity_id: switch.ge_26931_smart_motion_switch_switch_2
-- alias: Dryer Timer stop
-  id: 'dryerstop'
-  trigger: 
-  - platform: event
-    event_type: timer.finished
-    event_data: 
-      entity_id: timer.dryer
-  action:
-  - service: notify.me_alexa
-    data:
-      message: 'The dryer has finished at {{now().strftime("%I:%M %p")}}'
-  - service: joaoapps_join.s8_send_sms
-    data_template:
-      message: 'The dryer has finished at {{now().strftime("%I:%M %p")}}'
-      number: !secret wife_phone
 - alias: Motion in Basement Hallway
   trigger:
     platform: event

@@ -25,6 +25,9 @@ views:
         entities:
           - sensor.zooz_motion_battery
           - sensor.basement_smoke_alarm_battery
+          - sensor.dinning_door_battery
+          - sensor.dryer_shock_battery
+          - sensor.basement_thermostat_battery
       - type: entities
         title: Household
         entities:
@@ -76,11 +79,17 @@ views:
       - type: media-control
         title: Samsung TV
         entity: media_player.samsung_tv_remote
+  - title: Dinning Room
+    cards:
+      - type: entities
+        title: Entities
+        entities:
+          - sensor.top_slider_door
   - title: Master Bedroom
     cards:
       - type: media-control
         title: Parent's Bedroom Chromecast
-        entity: media_player.parents_bedroom_tv
+        entity: media_player.chromecast0135
       - type: entities
         title: Closet
         entities:
@@ -117,11 +126,13 @@ views:
       - type: entities
         title: Laundry Room
         entities:
-          - timer.dryer
+          - binary_sensor.dryer_status
       - type: entities
         title: Play Room
         entities:
           - media_player.basement_tv
+      - type: thermostat
+        entity: climate.radio_thermostat_company_of_america_ct101_thermostat_iris_heating_1
       - type: history-graph
         title: 'Basement Temperature Graph'
         hours_to_show: 240
@@ -155,6 +166,13 @@ views:
   - icon: mdi:weather-partlycloudy
     title: Weather
     cards:
+      - entities: []
+        geo_location_sources:
+          - wwlln
+        title: Lightning Strikes
+        type: map
+        default_zoom: 6
+        aspect_ratio: '2'
       - type: picture-entity
         entity: camera.bos_weather_radar
       - type: weather-forecast

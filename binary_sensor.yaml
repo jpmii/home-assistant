@@ -20,20 +20,20 @@
         prob_given_true: 0.85
         platform: 'state'
         to_state: 'on'
-
-  - name: 'anyone_home'
-    platform: 'bayesian'
-    prior: 0
-    probability_threshold: 0.8
-    observations:
-      - entity_id: 'group.people'
-        prob_given_true: 0.85
-        prob_given_false: 0
-        platform: 'state'
-        to_state: 'home'
-      - entity_id: 'sensor.livingroom_tv'
-        prob_given_true: 0.50
-        platform: 'state'
-        to_state: 'on'
   
-  - platform: ring
+  - platform: template
+    sensors:
+      dryer_status:
+        friendly_name: "Dryer Status"
+        delay_on:
+          minutes: 2
+        delay_off:
+          minutes: 2
+        value_template: >-
+          {{ states('sensor.vision_security_zs5101_shock_and_vibration_sensor_burglar')|float == 2 }}
+  - platform: template
+    sensors:
+      lightning_active:
+        friendly_name: Lightning active
+        value_template: >
+          {{states('sensor.count_lightning_strikes')|int > 0 }}
