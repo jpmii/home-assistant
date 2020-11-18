@@ -1,7 +1,6 @@
 - id: basement_hall_motion
   alias: "Motion Detected in Basement Hall - Turn on Stair Lights"
   initial_state: True
-  hide_entity: False
   trigger:
     - platform: state
       entity_id: sensor.zooz_motion_detect_template
@@ -9,7 +8,7 @@
       to: "motion detected"
   action:
     service: switch.turn_on
-    entity_id: switch.ge_26931_smart_motion_switch_switch_2
+    entity_id: switch.basement_stairs
 - alias: Turn off basement stairs light 3 minutes after last movement
   trigger:
     platform: state
@@ -19,15 +18,75 @@
       minutes: 3
   action:
     service: switch.turn_off
-    entity_id: switch.ge_26931_smart_motion_switch_switch_2
-- alias: Motion in Basement Hallway
+    entity_id: switch.basement_stairs
+- alias: Motion in House - Turn on Kitchen
   trigger:
-    platform: event
-    event_type: ifttt_webhook_received
-    event_data:
-      action: call_service
+    - platform: state
+      entity_id: switch.basement_stairs
+      to: 'on'
+    - platform: state
+      entity_id: sensor.zooz_motion_detect_template
+      to: 'motion detected'
+    - platform: event
+      event_type: ifttt_webhook_received
+      event_data:
+        action: call_service
+  condition:
+    condition: or
+    conditions:
+      - condition: time
+        after: '23:00:00'
+      - condition: sun
+        before: sunrise
   action:
-    service: notify.me
-    data_template:
-      title: "Motion!"
-      message: '{{ trigger.event.data.message }}'
+    - service: light.turn_on
+      data:
+        entity_id: light.stove_light
+- alias: Turn on Basement Heat AM
+  trigger:
+    - platform: time
+      at: '08:00:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.current_temp
+        below: 66
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: 'on'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.basement_heat
+        temperature: 68
+        hvac_mode: heat
+- alias: Turn on Basement Heat temp outside
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.current_temp
+      below: 66
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        after: '08:00:00'
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: 'on'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.basement_heat
+        temperature: 68
+        hvac_mode: heat
+- alias: Reset Basement Heat
+  trigger:
+    - platform: time
+      at: '00:15:00'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.basement_heat
+        temperature: 60
+        hvac_mode: heat

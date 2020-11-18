@@ -4,11 +4,13 @@
         state: off
       switch.68102802dc4f22ef95b7:
         state: off
-      light.hank_hkzwrgb01_rgb_bulb_level:
+      light.living_room:
         state: off
-      switch.ge_26931_smart_motion_switch_switch:
+      switch.master_bedroom_closet:
         state: off
-      switch.ge_26931_smart_motion_switch_switch_3:
+      switch.basement_stairs:
         state: off
       light.front_door:
+        state: off
+      light.stove_light:
         state: off

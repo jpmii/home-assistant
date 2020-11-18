@@ -17,7 +17,7 @@
         state: 'Halloween'
   action:
     - service: switch.turn_on
-      entity_id: switch.ge_14284_outdoor_smart_switch_switch
+      entity_id: switch.outdoor_right_yard
 
 - alias: Outside Lights Off
   trigger:
@@ -37,7 +37,7 @@
         state: 'Halloween'
   action:
     - service: switch.turn_off
-      entity_id: switch.ge_14284_outdoor_smart_switch_switch
+      entity_id: switch.outdoor_right_yard
 
 - alias: Holiday - Christmas Lighting On
   trigger:

@@ -29,25 +29,25 @@
 # Kids Light
 #
 
-- alias: Kids Light ready to go for school day
-  trigger:
-    - platform: time
-      at: '06:30:00'
-  condition:
-    - condition: state
-      entity_id: input_boolean.vacation_mode
-      state: 'off'
-    - condition: state
-      entity_id: sensor.school_day
-      state: 'True'
-  action:
-    - service: light.lifx_set_state
-      data_template:
-        entity_id:
-         - light.kids_light
-        brightness: 100
-        rgb_color: ["{{range(256)|random}}","{{range(256)|random}}","{{range(256)|random}}"]
-        transition: 15
+#- alias: Kids Light ready to go for school day
+#  trigger:
+#    - platform: time
+#      at: '06:30:00'
+#  condition:
+#    - condition: state
+#      entity_id: input_boolean.vacation_mode
+#      state: 'off'
+#    - condition: state
+#      entity_id: sensor.school_day
+#      state: 'True'
+#  action:
+#    - service: lifx.set_state
+#      data_template:
+#        entity_id:
+#         - light.kids_light
+#        brightness: 100
+#        rgb_color: ["{{range(256)|random}}","{{range(256)|random}}","{{range(256)|random}}"]
+#        transition: 15
 - alias: Kids Light ready to go for off day
   trigger:
     - platform: time
@@ -56,14 +56,15 @@
     - condition: state
       entity_id: input_boolean.vacation_mode
       state: 'off'
-    - condition: state
-      entity_id: sensor.school_day
-      state: 'False'
+#    - condition: state
+#      entity_id: sensor.school_day
+#      state: 'False'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data_template:
         entity_id:
          - light.kids_light
+        power: True
         brightness: 100
         rgb_color: ["{{range(256)|random}}","{{range(256)|random}}","{{range(256)|random}}"]
         transition: 15
@@ -76,7 +77,7 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.kids_light
@@ -93,7 +94,7 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.kids_light
@@ -108,7 +109,7 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.kids_light
@@ -144,7 +145,7 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.kids_light
@@ -153,3 +154,42 @@
         color_temp: 285
         white_value: 255
         transition: 15
+- id: kids_light_off_time
+  alias: "Kids Light off at 9pm"
+  trigger:
+    - platform: time
+      at: '21:00:00'
+  condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - sun
+  action:
+    service: light.turn_off
+    entity_id: light.kids_light
+- id: kids_light_off_time_weekend
+  alias: "Kids Light off at 10pm"
+  trigger:
+    - platform: time
+      at: '22:00:00'
+  condition:
+    - condition: time
+      weekday:
+        - sat
+        - fri
+  action:
+    service: light.turn_off
+    entity_id: light.kids_light
+# - alias: Motion in Kids Room - Turn on Kitchen
+  # trigger:
+    # platform: event
+    # event_type: ifttt_webhook_received
+    # event_data:
+      # action: call_service
+  # action:
+    # - service: light.turn_on
+      # data:
+        # entity_id: light.stove_light

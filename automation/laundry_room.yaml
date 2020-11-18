@@ -4,14 +4,15 @@
   - platform: state
     entity_id: binary_sensor.dryer_status
     to: 'off'
+    for:
+      minutes: 2
   action:
   - service: notify.me
     data:
       message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
-  - service: joaoapps_join.s8_send_sms
+  - service: notify.wife
     data_template:
-      message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
-      number: !secret wife_phone
+      message: 'Ello! The dryer has stopped at {{now().strftime("%I:%M %p")}}'
 # - alias: Dryer sense stop tell Alexa
   # id: 'dryersensestopalexa'
   # trigger: 

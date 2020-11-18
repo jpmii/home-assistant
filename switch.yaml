@@ -1,6 +1,6 @@
   - platform: flux
     lights:
-      - light.hank_hkzwrgb01_rgb_bulb_level
+      - light.living_room
     name: Fluxer
     start_time: '7:00'
     stop_time: '23:00'

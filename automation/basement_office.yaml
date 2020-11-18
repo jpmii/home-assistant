@@ -1,0 +1,86 @@
+- id: office_light_off_time
+  alias: "Office Light off at 12:15 AM"
+  initial_state: True
+  trigger:
+    - platform: time
+      at: '00:15:00'
+  action:
+    service: light.turn_off
+    entity_id: light.office_desk_lamp
+- id: office_light_on_light
+  alias: "Office Desk Light turn on based on ambient light sensor"
+  initial_state: True
+  trigger:
+      platform: numeric_state
+      entity_id: sensor.sunlight_pct
+      below: 10
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        after: '07:00:00'
+  action:
+    service: light.turn_on
+    entity_id: light.office_desk_lamp
+    data_template:
+      brightness: 90
+- id: office_light_off_light
+  alias: "Office Desk Light turn off based on ambient light sensor"
+  initial_state: True
+  trigger:
+      platform: numeric_state
+      entity_id: sensor.sunlight_pct
+      above: 10
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        after: '07:00:00'
+      - condition: time
+        before: '23:00:00'
+  action:
+    service: light.turn_off
+    entity_id: light.office_desk_lamp
+    
+#########################
+# Alerts
+#########################
+- alias: Motion in Kids Room
+  trigger:
+    platform: event
+    event_type: ifttt_webhook_received
+    event_data:
+      action: call_service
+  action:
+    - service: YEELIGHT.START_FLOW
+      data:
+        entity_id: light.office_desk_lamp
+        count: 1
+        action: recover
+        transitions:
+          - RGBTransition: [0, 0, 255, 800]
+- alias: Basement Stairs Turned On
+  trigger:
+    platform: state
+    entity_id: switch.basement_stairs
+    to: 'on'
+  action:
+    - service: scene.create
+      data_template:
+        scene_id: office_desk_lamp
+        entities:
+          light.office_desk_lamp:
+            state: "{{ states('light.office_desk_lamp') }}"
+            brightness: "{{ state_attr('light.office_desk_lamp','brightness') }}"
+    - service: light.turn_on
+      entity_id: light.office_desk_lamp
+    - service: YEELIGHT.START_FLOW
+      data:
+        entity_id: light.office_desk_lamp
+        count: 1
+        action: recover
+        transitions:
+          - RGBTransition: [0, 255, 0, 800]
+    - delay: '0:00:30'
+    - service: scene.turn_on
+      entity_id: scene.office_desk_lamp

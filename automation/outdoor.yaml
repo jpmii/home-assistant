@@ -8,7 +8,7 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.front_door
@@ -24,7 +24,7 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.front_door
@@ -46,7 +46,7 @@
     - condition: template
       value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.front_door
@@ -67,7 +67,7 @@
     - condition: template
       value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
   action:
-    - service: light.lifx_set_state
+    - service: lifx.set_state
       data:
         entity_id:
          - light.front_door

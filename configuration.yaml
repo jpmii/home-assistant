@@ -11,22 +11,14 @@ lovelace:
   mode: yaml
   
 frontend:
-  extra_html_url:
-    - /local/custom_ui/state-card-floorplan.html
 config:
-
-http:
-  base_url: !secret hass_url
-  server_port: 443
-  ssl_certificate: /ssl/fullchain.pem
-  ssl_key: /ssl/privkey.pem
 
 device_tracker:
   - platform: ping
     interval_seconds: 30
     consider_home: 1200
     hosts:
-      me_android: !secret my_phone_ip
+      me_phone: !secret my_phone_ip
       wife_iphone: !secret wife_phone_ip
 
 media_player:
@@ -35,29 +27,24 @@ media_player:
     port: 8001
     mac: 64:1c:b0:1f:39:63
 
-person:
-  - name: !secret me_name
-    id: me6789
-    device_trackers:
-      - device_tracker.me_phone
-  - name: !secret wife_name
-    id: wife1234
-    device_trackers:
-      - device_tracker.wife_iphone
-
 zwave:
-  usb_path: /dev/ttyACM0
+  usb_path: /dev/ttyACM1
   network_key: "0x84, 0xEA, 0x5D, 0xCF, 0x28, 0xFC, 0x1F, 0x6B, 0x7C, 0xD1, 0xF3, 0xDD, 0xDE, 0xA6, 0x3D, 0xB2"
-  
+
+telegram_bot:
+  - platform: polling
+    api_key: 1080198792:AAH1twDIbxoCpkyS7aQdQuu0IuWn6UA1hTw
+    allowed_chat_ids:
+      - !secret telegram_id_me
+      - !secret telegram_id_wife
+
 notify:
-  - platform: joaoapps_join
-    name: all
-    device_id: group.all
-    api_key: !secret join_api
-  - platform: joaoapps_join
-    device_id: !secret join_device_id_me
+  - platform: telegram
+    chat_id: !secret telegram_id_me
     name: me
-    api_key: !secret join_api
+  - platform: telegram
+    chat_id: !secret telegram_id_wife
+    name: wife
   - platform: rest
     name: alexa
     message_param_name: notification
@@ -69,10 +56,7 @@ notify:
     services:
       - service: alexa
       - service: me
-joaoapps_join:
-  - name: s8
-    device_id: !secret join_device_id_me
-    api_key: !secret join_api
+
 # Checks for available updates
 # Note: This component will send some information about your system to
 # the developers to assist with development of Home Assistant.
@@ -104,22 +88,6 @@ sun:
 binary_sensor: !include binary_sensor.yaml
 sensor: !include sensors.yaml
 
-#Graph
-history_graph:
-  gr1:
-    name: Temperature Graph
-    entities:
-      - sensor.dark_sky_temperature
-      - sensor.zooz_zse40_4in1_sensor_temperature
-    hours_to_show: 240
-    refresh: 60
-  gr2:
-    name: Humidity Graph
-    entities:
-      - sensor.dark_sky_humidity
-      - sensor.zooz_zse40_4in1_sensor_relative_humidity
-    hours_to_show: 240
-    refresh: 60
 weather:
   - platform: darksky
     api_key: !secret darksky_api
@@ -131,15 +99,20 @@ tts:
 # Cloud
 cloud: !include cloud.yaml
 
-tuya:
-  username: !secret tuya_user
-  password: !secret tuya_pass
-  country_code: 1
-  platform: smart_life
+# tuya:
+  # username: !secret tuya_user
+  # password: !secret tuya_pass
+  # country_code: 1
+  # platform: smart_life
   
 ring:
   username: !secret ring_username
   password: !secret ring_password
+
+yeelight:
+  devices:
+    192.168.1.207:
+      name: Office Desk Lamp
 
 google:
   client_id: !secret googlecal_id
@@ -148,11 +121,6 @@ google:
 # androidtv:
   # name: Kid's TV
   # host:
-  
-wwlln:
-  radius: 100
-  latitude: !secret home_lat
-  longitude: !secret home_long
 
 group: !include groups.yaml
 camera: !include cameras.yaml

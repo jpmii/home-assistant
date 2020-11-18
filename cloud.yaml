@@ -12,7 +12,7 @@
         name: Livingroom TV
         description: The Television in the Living Room
         display_categories: MEDIA_PLAYER
-      light.hank_hkzwrgb01_rgb_bulb_level:
+      light.living_room:
         name: Livingroom Light
         description: The lamp in the Living Room
         display_categories: LIGHT

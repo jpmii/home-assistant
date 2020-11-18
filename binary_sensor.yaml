@@ -25,15 +25,9 @@
     sensors:
       dryer_status:
         friendly_name: "Dryer Status"
-        delay_on:
-          minutes: 2
-        delay_off:
-          minutes: 2
+#        delay_on:
+#          minutes: 2
+#        delay_off:
+#          minutes: 2
         value_template: >-
           {{ states('sensor.vision_security_zs5101_shock_and_vibration_sensor_burglar')|float == 2 }}
-  - platform: template
-    sensors:
-      lightning_active:
-        friendly_name: Lightning active
-        value_template: >
-          {{states('sensor.count_lightning_strikes')|int > 0 }}

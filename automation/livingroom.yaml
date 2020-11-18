@@ -1,17 +1,15 @@
 - id: livingroom_light_off_time
   alias: "Living Room Lamp off at 11pm"
   initial_state: True
-  hide_entity: False
   trigger:
     - platform: time
       at: '23:00:00'
   action:
     service: light.turn_off
-    entity_id: light.hank_hkzwrgb01_rgb_bulb_level
+    entity_id: light.living_room
 - id: livingroom_light_on_light
   alias: "Living Room Lamp turn on based on ambient light sensor"
   initial_state: True
-  hide_entity: False
   trigger:
       platform: numeric_state
       entity_id: sensor.sunlight_pct
@@ -23,14 +21,13 @@
         after: '07:00:00'
   action:
     service: light.turn_on
-    entity_id: light.hank_hkzwrgb01_rgb_bulb_level
+    entity_id: light.living_room
     data_template:
       brightness: 90
       rgb_color: [255,162,71]
 - id: livingroom_light_on_light_7am
   alias: "7am Living Room Lamp turn on based on ambient light sensor"
   initial_state: True
-  hide_entity: False
   trigger:
       platform: time
       at: '07:00:00'
@@ -42,14 +39,13 @@
         below: '10'
   action:
     service: light.turn_on
-    entity_id: light.hank_hkzwrgb01_rgb_bulb_level
+    entity_id: light.living_room
     data_template:
       brightness: 90
       rgb_color: [255,162,71]
 - id: livingroom_light_off_light
   alias: "Living Room Lamp turn off based on ambient light sensor"
   initial_state: True
-  hide_entity: False
   trigger:
       platform: numeric_state
       entity_id: sensor.sunlight_pct
@@ -63,4 +59,4 @@
         before: '23:00:00'
   action:
     service: light.turn_off
-    entity_id: light.hank_hkzwrgb01_rgb_bulb_level
+    entity_id: light.living_room
