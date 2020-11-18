@@ -33,7 +33,7 @@ zwave:
 
 telegram_bot:
   - platform: polling
-    api_key: 1080198792:AAH1twDIbxoCpkyS7aQdQuu0IuWn6UA1hTw
+    api_key: !secret telegram_api
     allowed_chat_ids:
       - !secret telegram_id_me
       - !secret telegram_id_wife
