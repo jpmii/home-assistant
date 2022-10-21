@@ -5,11 +5,17 @@
     radius: 100
     icon: mdi:house
 #Work
-  - name: Work
+  - name: Dad's Work
     latitude: !secret work_lat
     longitude: !secret work_long
     radius: 300
-    icon: mdi:briefcase
+    icon: mdi:office-building-outline
+#Wife Work
+  - name: Mom's Work
+    latitude: !secret wife_work_lat
+    longitude: !secret wife_work_long
+    radius: 300
+    icon: mdi:hospital-box-outline
 #School
   - name: School
     latitude: !secret school_lat
@@ -17,7 +23,7 @@
     radius: 100
     icon: mdi:school
 #Parents
-  - name: Parents
+  - name: Mimi's
     latitude: !secret myparents_lat
     longitude: !secret myparents_long
     radius: 100

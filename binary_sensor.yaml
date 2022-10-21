@@ -1,33 +1,15 @@
   - platform: workday
     country: US
-    province: CA
-    
-  - name: 'livingroom_tv'
-    platform: 'bayesian'
-    prior: 0.5
-    probability_threshold: 0.8
-    observations:
-      - entity_id: 'group.people'
-        prob_given_true: 0.2
-        prob_given_false: 0
-        platform: 'state'
-        to_state: 'home'
-      - entity_id: 'media_player.samsung_tv_remote'
-        prob_given_true: 0.85
-        platform: 'state'
-        to_state: 'on'
-      - entity_id: 'media_player.living_room_tv'
-        prob_given_true: 0.85
-        platform: 'state'
-        to_state: 'on'
-  
+  - platform: workday
+    name: "Workday Tomorrow"
+    country: US
+    days_offset: 1
+
   - platform: template
     sensors:
-      dryer_status:
-        friendly_name: "Dryer Status"
-#        delay_on:
-#          minutes: 2
-#        delay_off:
-#          minutes: 2
-        value_template: >-
-          {{ states('sensor.vision_security_zs5101_shock_and_vibration_sensor_burglar')|float == 2 }}
+      fridge_above_threshold:
+        value_template: "{{ states('sensor.x00158d0002461b30_temperature') | int > 50 }}"
+        friendly_name: "Fridge Above 50 Degrees"
+      basement_humidity_above_threshold:
+        value_template: "{{ states('sensor.basement_hall_humidity') | int > 75 }}"
+        friendly_name: "Basement Humidity Above 75"

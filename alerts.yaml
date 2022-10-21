@@ -1,0 +1,60 @@
+  oven_upper:
+    name: Oven is On
+    done_message: Oven is Off
+    entity_id: sensor.oven_oven_upper_state
+    state: "on"
+    repeat: 30
+    message: "Oven has been on for 30 minutes or more"
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - me
+      - wife
+  oven_lower:
+    name: Broiler is On
+    done_message: Broiler is Off
+    entity_id: sensor.oven_oven_lower_state
+    state: "on"
+    repeat: 30
+    message: "Broiler has been on for 30 minutes or more"
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - me
+      - wife
+  cooktop:
+    name: Cooktop is On
+    done_message: Cooktop is Off
+    entity_id: binary_sensor.oven_cooktop_state
+    state: "on"
+    repeat: 30
+    message: "Cooktop burners are on: {{ states.sensor.cooktop_on.state }}"
+    can_acknowledge: true
+    skip_first: false
+    notifiers:
+      - me
+      - wife
+  fridge:
+    name: Fridge is above Threshold
+    done_message: Everybody chilled out.
+    entity_id: binary_sensor.fridge_above_threshold
+    state: "on"
+    repeat: 10
+    message: "Im melting! Fridge is above 50 degrees, currently at {{states.sensor.x00158d0002461b30_temperature.state}}F"
+    can_acknowledge: true
+    skip_first: false
+    notifiers:
+      - me
+      - wife
+  basement_humid:
+    name: Basement Humidity High
+    done_message: Basement no longer humid.
+    entity_id: binary_sensor.basement_humidity_above_threshold
+    state: "on"
+    repeat: 180
+    message: "Basement seems humid, currently at {{states.sensor.basement_hall_humidity.state}}%"
+    can_acknowledge: true
+    skip_first: false
+    notifiers:
+      - me
+      - wife

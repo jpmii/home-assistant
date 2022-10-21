@@ -1,17 +1,54 @@
-- alias: Top Slider Open or Closed
-  id: 'topslideropenclosed'
+- alias: Dining Room Slider Opened
+  id: 'dining_room_slider_opened'
   trigger: 
   - platform: state
-    entity_id: sensor.top_slider_door
-    to: 'Open'
-  condition:
-  - condition: template
-    value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
+    entity_id: binary_sensor.dining_room_slider_contact
+    to: 'on'
   action:
-  - service: notify.me
+  - service: notify.family
     data:
-      message: 'Slider Door opened at {{now().strftime("%I:%M %p")}}'
-  - service: joaoapps_join.s8_send_sms
-    data_template:
-      message: 'Slider Door opened at {{now().strftime("%I:%M %p")}}'
-      number: !secret wife_phone
+      message: 'Dining Room Slider opened at {{now().strftime("%I:%M %p")}}'
+
+- id: dining_room_slider_opened_overnight
+  alias: "Dining Room Slider Opened Overnight"
+  trigger:
+      platform: state
+      entity_id: binary_sensor.dining_room_slider_contact
+      to: 'on'
+  condition:
+    condition: or
+    conditions:
+      - condition: time
+        after: '23:00:00'
+      - condition: time
+        before: '07:00:00'
+  action:
+    - service: notify.alexa_media
+      data_template:
+        target: 
+          - media_player.basement_dot
+          - media_player.living_room_show
+          - media_player.parent_s_bedroom_dot
+        message: "Dining Room Slider Opened"
+        data:
+          type: "announce"
+- alias: Turn off upstairs heat if slider opened
+  trigger:
+    platform: state
+    entity_id: binary_sensor.dining_room_slider_contact
+    to: 'on'
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: climate.first_floor_heat
+        state: 'heat'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.first_floor_heat
+        temperature: 50
+        hvac_mode: off
+    - service: notify.family
+      data:
+        message: 'Turning off first floor heat because the dining room slider opened with the heat turned on.'

@@ -1,4 +1,3 @@
-  - platform: moon
   - platform: time_date
     display_options:
       - 'time'
@@ -30,24 +29,9 @@
       - pressure
       - visibility
       - ozone
-  - platform: waze_travel_time
-    name: "My Morning Commute"
-    origin: zone.home
-    destination: zone.work
-    region: 'US'
-  - platform: waze_travel_time
-    name: "My Evening Commute"
-    origin: zone.work
-    destination: zone.home
-    region: 'US'
-  - platform: plex
-    host: !secret plex_ip
   - platform: template
     sensors:
       sunlight_pct:
-        entity_id:
-          - sun.sun
-          - sensor.openweathermap_cloud_coverage
         value_template: >-
           {%- set elevation = state_attr('sun.sun','elevation') | float %}
           {%- set cloud_coverage = states('sensor.openweathermap_cloud_coverage') | float %}
@@ -65,23 +49,9 @@
         unit_of_measurement: '%'
         device_class: 'illuminance'
       current_temp:
-        value_template: "{% if is_state('weather.kpvd_hourly', 'unavailable') %}{{ states.weather.home.attributes.temperature | float }}{% elif is_state('weather.kpvd_hourly', '') %}{{ states.weather.home.attributes.temperature | float }}{% else %}{{ states.weather.kpvd_hourly.attributes.temperature | float }}{% endif %}"
+        value_template: "{% if is_state('weather.kpvd_hourly', 'unavailable') %}{{ states.weather.home.attributes.temperature | float }}{% elif is_state('weather.kpvd_hourly', '') %}{{ states.weather.kpvd_hourly.attributes.temperature | float }}{% else %}{{ states.weather.home.attributes.temperature | float }}{% endif %}"
         friendly_name: 'Current Temperature'
         unit_of_measurement: "°F"
-      zooz_motion_detect_template:
-        value_template: "{%if states.sensor.zooz_zse40_4_in_1_sensor_alarm_level.state > '253' %}motion detected{% elif states.sensor.zooz_zse40_4_in_1_sensor_alarm_level.state == '0' %}standby{% endif %}"
-        friendly_name: "Basement Hall Motion"
-        entity_id: sensor.zooz_zse40_4_in_1_sensor_alarm_level
-      zooz_motion_battery:
-        value_template: "{{ states.zwave.zooz_zse40_4_in_1_sensor.attributes.battery_level }}"
-        friendly_name: "Basement Hall Sensor Battery"
-        unit_of_measurement: '%'
-        device_class: battery
-      dinning_door_battery:
-        value_template: "{{ states.zwave.vision_security_zd2102_eu_door_window_sensor.attributes.battery_level }}"
-        friendly_name: "Dinning Room Door Sensor Battery"
-        unit_of_measurement: '%'
-        device_class: battery
       dryer_shock_battery:
         value_template: "{{ states.zwave.vision_security_zs5101_shock_and_vibration_sensor.attributes.battery_level }}"
         friendly_name: "Dryer Vibration Sensor Battery"
@@ -92,6 +62,28 @@
         friendly_name: "Basement Thermostat Battery"
         unit_of_measurement: '%'
         device_class: battery
+      dryer_status:
+        friendly_name: "Dryer Status"
+        icon_template: mdi:tumble-dryer
+        value_template: >-
+          {% if is_state('input_boolean.dryer_on', 'on') %} On {% else %} Off {% endif %}
+      washing_machine_status:
+        friendly_name: "Washing Machine Status"
+        icon_template: mdi:washing-machine
+        value_template: >-
+          {% if states.sensor.washing_machine_power.state|float > 0 %} On {% else %} Off {% endif %}
+      washing_machine_power:
+        value_template: "{{ states.sensor.sonoff_10012a9d3b_power }}"
+        friendly_name: "Washing Machine Power"
+        device_class: power
+      washing_machine_current:
+        value_template: "{{ states.sensor.sonoff_10012a9d3b_current }}"
+        friendly_name: "Washing Machine Current"
+        device_class: current
+      washing_machine_voltage:
+        value_template: "{{ states.sensor.sonoff_10012a9d3b_voltage }}"
+        friendly_name: "Washing Machine Voltage"
+        device_class: voltage
       basement_smoke_detector:
         friendly_name: 'Basement Smoke Detector'
         value_template: >-
@@ -110,14 +102,19 @@
           {% else %}
             mdi:smoke-detector
           {% endif %}
-      ge_motion_detect_template:
-        value_template: "{%if states.sensor.ge_26931_smart_motion_switch_alarm_level.state > '253' %}motion detected{% elif states.sensor.ge_26931_smart_motion_switch_alarm_level.state == '0' %}standby{% endif %}"
-        friendly_name: "Basement Stairs Motion"
-        entity_id: sensor.ge_26931_smart_motion_switch_alarm_level
-      ge_motion_detect_bedroom_closet:
-        value_template: "{%if states.sensor.ge_26931_smart_motion_switch_alarm_level_3.state > '253' %}motion detected{% elif states.sensor.ge_26931_smart_motion_switch_alarm_level_3.state == '0' %}standby{% endif %}"
-        friendly_name: "Bedroom Closet Motion"
-        entity_id: sensor.ge_26931_smart_motion_switch_alarm_level_3
+      battery_basement_slider_water_leak:
+        friendly_name: 'Basement Slider Water Leak Battery Level'
+        value_template: "{{ states.binary_sensor.basement_slider_wl_water_leak.attributes.battery }}"
+        unit_of_measurement: '%'
+        device_class: battery
+      temperature_weather_home:
+        unit_of_measurement: '°F'
+        friendly_name: "Weather.Home Temperature (met.no)"
+        value_template: "{{ state_attr('weather.home', 'temperature') }}"
+      temperature_weather_kpvd_hourly:
+        unit_of_measurement: '°F'
+        friendly_name: "KPVD Temperature (National Weather Service/NOAA)"
+        value_template: "{{ state_attr('weather.kpvd_hourly', 'temperature') }}"
       bad_weather_sensor:
         value_template: "{% if states.sensor.dark_sky_precip_probability.state|float > 80 and states.sensor.dark_sky_nearest_storm_distance.state < '6' %}Yes{% else %}No{% endif %}"
         friendly_name: "Bad Weather"
@@ -129,27 +126,58 @@
           {% else %}
             mdi:weather-sunny
           {% endif %}
+      low_batteries:
+        friendly_name: Low Battery Devices
+        unit_of_measurement: Entities
+        icon_template: "{{ 'mdi:checkbox-marked-circle-outline' if states('sensor.low_batteries')|int == 0 else 'mdi:alert-circle-outline' }}"
+        value_template: >
+            {%- set ns = namespace(counter=0) -%} 
+            {%- set threshold = 30 -%}
+            {%- for item in expand('group.battery_levels') -%}
+            {%- if item.state | int <= threshold -%}
+            {%- set ns.counter = ns.counter + 1 -%}
+            {%- endif -%}
+            {%- endfor -%}
+            {{ ns.counter }}
+        attribute_templates:
+          matched_devices: >
+            {%- set threshold = 30 -%}
+            {%- for item in expand('group.battery_levels') -%}
+            {%- if item.state | int <= threshold -%}
+             - {{ item.name }} - {{ item.state }}|
+            {%- endif -%}
+            {%- endfor -%}
       my_name:
         value_template: !secret me_name
+      cooktop_on:
+        value_template: >
+          {% for attr in states.sensor.oven.attributes %}{%- if  "cooktop" in attr and states.sensor.oven.attributes[attr] != 'off'  -%}{{attr.split('_state')[0]|replace('_',' ')}}, {%- endif %}{%- endfor -%}
       ambient_light:
         friendly_name: 'Ambient Light'
         value_template: '{{ "%.2f"|format((states.sun.sun.attributes.elevation/24)*((states.sun.sun.attributes.elevation/24)+(1-(states.sensor.dark_sky_cloud_coverage.state|int/100)))) }}'
       date_md:
-        entity_id: sensor.date
         value_template: "{{ now().month }}-{{ now().day }}"
       off_day:
-        entity_id: sensor.time
         value_template: "{{'NO SCHOOL' in states.calendar.murphy_calendar.attributes.message or states.binary_sensor.workday_sensor.state == 'off'}}"
         #    value_template: "{{ ((as_timestamp(states.calendar.hoxie.attributes.start_time) - as_timestamp(now())) < 43200) and ((as_timestamp(states.calendar.hoxie.attributes.start_time) - as_timestamp(now())) > 0) }}"
       school_day:
-        entity_id: sensor.time
-        value_template: "{{ ((as_timestamp(states.calendar.hoxsie.attributes.start_time) - as_timestamp(now())) < 43200) and ((as_timestamp(states.calendar.hoxsie.attributes.start_time) - as_timestamp(now())) > 0) }}"
-        #states.calendar.hoxsie.attributes.start_time
-      top_slider_door:
-        value_template: "{%if states.sensor.vision_security_zd2102_eu_door_window_sensor_access_control.state == '23' %}Closed{% else %}Open{% endif %}"
-        friendly_name: "Dinning Room Slider"
-        entity_id: sensor.vision_security_zd2102_eu_door_window_sensor_access_control
+        value_template: "{{ ((as_timestamp(states.calendar.school_days.attributes.start_time) - as_timestamp(now())) < 43200) and ((as_timestamp(states.calendar.school_days.attributes.start_time) - as_timestamp(now())) > 0) }}"
+        #states.calendar.school_days.attributes.start_time
+      school_day_off_tomorrow:
+        value_template: "{{(as_timestamp(now() + timedelta(days=1)) | timestamp_custom('%Y-%m-%d') == as_timestamp(states.calendar.school_days.attributes.start_time) | timestamp_custom('%Y-%m-%d')) or states.binary_sensor.workday_tomorrow.state == 'off'}}"
+      distance_learning_tomorrow:
+        value_template: >
+          {% if (state_attr("calendar.distance_learning_days","start_time")) %}
+              {% set e = strptime(
+                   states.calendar.distance_learning_days.attributes.start_time,
+                   '%Y-%m-%d %H:%M:%S') %}
+              {{ (e) and (e.strftime('%j')|int - now().strftime('%j')|int == 1 )}}
+          {% else %}
+            False
+          {% endif %}
       sleep_mode:
-        value_template: "{% set t = strptime(states('sensor.time'), '%H:%M') %}{%- if t.hour >= 22 or t.hour <=6 -%}all sleep{%- elif t.hour >= 17 or t.hour <=6 -%}kids asleep{%- else -%}awake{%- endif -%}"
+        value_template: "{% set t = strptime(states('sensor.time'), '%H:%M') %}{%- if t.hour >= 23 or t.hour <=6 -%}all sleep{%- elif t.hour >= 20 or t.hour <=6 -%}kids asleep{%- else -%}awake{%- endif -%}"
         friendly_name: "Anyone Sleeping?"
-        entity_id: sensor.time
+      holidaylighttime:
+        value_template: "{{ as_timestamp(state_attr('sun.sun', 'next_setting') | as_datetime - timedelta(minutes=30)) | timestamp_custom(' %I:%M %p') }}"
+        friendly_name: "Outside Light(s) will turn on at"

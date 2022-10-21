@@ -17,3 +17,32 @@
   action:
     service: switch.turn_off
     entity_id: switch.ge_26931_smart_motion_switch_switch_3
+
+- alias: Parents alarm set for tomorrow
+  trigger:
+    - platform: time
+      at: '20:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+  action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.parents_alarm
+        time: '{% if is_state("sensor.wife_work_day", "True") and is_state("sensor.school_day", "True") %}06:00:00{% else %}07:00:00{% endif %}'
+# - id: wife_going_to_work_wake_up
+  # alias: "Wife Going to Work Wake Up"
+  # trigger:
+    # platform: time
+    # at: input_datetime.parents_alarm
+  # condition:
+    # - condition: state
+      # entity_id: input_boolean.vacation_mode
+      # state: 'off'
+  # action:
+    # - service: media_player.play_media
+      # data:
+        # entity_id: media_player.parent_s_bedroom_dot
+        # media_content_id : "shuffle Wake up 1 playlist"
+        # media_content_type: "SPOTIFY"

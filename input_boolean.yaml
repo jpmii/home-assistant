@@ -7,3 +7,7 @@
   disable_home_away:
     name: Disable Home / Away Mode
     icon: mdi:map-marker-off
+  dryer_on:
+    name: Dryer Status
+    initial: off
+    icon: mdi:tumble-dryer

@@ -15,3 +15,13 @@
       - Red Sox Game
       - Patriots Game
     icon: mdi:gift
+  holiday_colors:
+    name: Holiday Colors
+    options:
+        - Will update
+    icon: mdi:palette
+  holiday_songs:
+    name: Holiday Songs
+    options:
+        - Will update
+    icon: mdi:palette

@@ -1,19 +1,21 @@
+#
+# Lights
+#
 - id: basement_hall_motion
   alias: "Motion Detected in Basement Hall - Turn on Stair Lights"
   initial_state: True
   trigger:
     - platform: state
-      entity_id: sensor.zooz_motion_detect_template
-      from: "standby"
-      to: "motion detected"
+      entity_id: binary_sensor.basement_hall_motion_detection
+      to: 'on'
   action:
     service: switch.turn_on
     entity_id: switch.basement_stairs
 - alias: Turn off basement stairs light 3 minutes after last movement
   trigger:
     platform: state
-    entity_id: sensor.zooz_motion_detect_template
-    to: 'standby'
+    entity_id: binary_sensor.basement_hall_motion_detection
+    to: 'off'
     for:
       minutes: 3
   action:
@@ -25,12 +27,11 @@
       entity_id: switch.basement_stairs
       to: 'on'
     - platform: state
-      entity_id: sensor.zooz_motion_detect_template
-      to: 'motion detected'
-    - platform: event
-      event_type: ifttt_webhook_received
-      event_data:
-        action: call_service
+      entity_id: binary_sensor.basement_hall_motion_detection
+      to: 'on'
+    - platform: state
+      entity_id: binary_sensor.front_bedroom_door_contact
+      to: 'on'
   condition:
     condition: or
     conditions:
@@ -42,6 +43,73 @@
     - service: light.turn_on
       data:
         entity_id: light.stove_light
+
+#
+# Water Leaks
+#
+
+- alias: Water Leak at Slider
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.basement_slider_wl_water_leak
+      from: "off"
+      to: "on"
+  action:
+    - service: notify.family
+      data_template:
+        message: "Water detected at basement slider"
+    - service: notify.alexa_media
+      data_template:
+        target: 
+          - media_player.basement_dot
+          - media_player.living_room_show
+          - media_player.parent_s_bedroom_dot
+        message: "Water detected at basement slider"
+        data:
+          type: "announce"
+- alias: Water Leak at Water Heater
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.water_heater_wl_water_leak
+      from: "off"
+      to: "on"
+  action:
+    - service: notify.family
+      data_template:
+        message: "Water detected at water heater"
+    - service: notify.alexa_media
+      data_template:
+        target: 
+          - media_player.basement_dot
+          - media_player.living_room_show
+          - media_player.parent_s_bedroom_dot
+        message: "Water detected at water heater"
+        data:
+          type: "announce"
+- alias: Water Leak at Outpipe
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.outpipe_wl_water_leak
+      from: "off"
+      to: "on"
+  action:
+    - service: notify.family
+      data_template:
+        message: "Water detected at basement outpipe"
+    - service: notify.alexa_media
+      data_template:
+        target: 
+          - media_player.basement_dot
+          - media_player.living_room_show
+          - media_player.parent_s_bedroom_dot
+        message: "Water detected at basement outpipe"
+        data:
+          type: "announce"
+
+#
+# Basement Heat
+#
+
 - alias: Turn on Basement Heat AM
   trigger:
     - platform: time
@@ -51,21 +119,24 @@
     conditions:
       - condition: numeric_state
         entity_id: sensor.current_temp
-        below: 66
+        below: 50
       - condition: state
         entity_id: binary_sensor.workday_sensor
         state: 'on'
+      - condition: state
+        entity_id: binary_sensor.basement_slider_contact
+        state: 'off'
   action:
     - service: climate.set_temperature
       data:
         entity_id: climate.basement_heat
-        temperature: 68
+        temperature: 65
         hvac_mode: heat
 - alias: Turn on Basement Heat temp outside
   trigger:
     - platform: numeric_state
       entity_id: sensor.current_temp
-      below: 66
+      below: 50
   condition:
     condition: and
     conditions:
@@ -78,7 +149,7 @@
     - service: climate.set_temperature
       data:
         entity_id: climate.basement_heat
-        temperature: 68
+        temperature: 58
         hvac_mode: heat
 - alias: Reset Basement Heat
   trigger:
@@ -88,5 +159,59 @@
     - service: climate.set_temperature
       data:
         entity_id: climate.basement_heat
-        temperature: 60
+        temperature: 50
         hvac_mode: heat
+- alias: Turn off Basement Heat temp outside
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.current_temp
+      above: 66
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        after: '08:00:00'
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: 'on'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.basement_heat
+        temperature: 50
+        hvac_mode: heat
+    - service: notify.family
+      data:
+        message: 'Turning off basement heat because the outside temp is above 66.'
+- alias: Basement Slider Opened
+  id: 'basement_slider_opened'
+  trigger: 
+  - platform: state
+    entity_id: binary_sensor.basement_slider_contact
+    to: 'on'
+  action:
+  - service: notify.me
+    data:
+      message: 'Basement Slider Door opened at {{now().strftime("%I:%M %p")}}'
+- alias: Turn off basement heat if slider opened for 1 minute
+  trigger:
+    platform: state
+    entity_id: binary_sensor.basement_slider_contact
+    to: 'on'
+    for:
+      seconds: 60
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: climate.basement_heat
+        state: 'heat'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.basement_heat
+        temperature: 50
+        hvac_mode: off
+    - service: notify.family
+      data:
+        message: 'Turning off basement heat because the slider opened for more than 1 minute with the heat turned on.'

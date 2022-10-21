@@ -8,72 +8,60 @@
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: lifx.set_state
-      data:
-        entity_id:
-         - light.front_door
-        brightness: 255
-        transition: 15
-        power: true
+    - service: light.turn_on
+      entity_id: light.front_door
 - alias: Front Door Light Off
   trigger:
     - platform: time
       at: '23:00:00'
+  action:
+    - service: light.turn_off
+      entity_id: light.front_door
+- alias: Front Door Light Off (Bug season)
+  trigger:
+    - platform: time
+      at: '21:00:00'
   condition:
     - condition: state
-      entity_id: input_boolean.vacation_mode
-      state: 'off'
+      entity_id: sensor.season
+      state: 'summer'
   action:
-    - service: lifx.set_state
-      data:
-        entity_id:
-         - light.front_door
-        power: false
-- alias: Front Door Motion Turn off Light
+    - service: light.turn_off
+      entity_id: light.front_door
+- alias: "Front Door Motion Turn off Light after 10 minutes"
   trigger:
     platform: state
-    entity_id: binary_sensor.ring_front_door_motion
-    to: 'off'
+    entity_id: light.front_door
+    to: 'on'
     for:
-      minutes: 5
+      minutes: 10
   condition:
-    - condition: state
-      entity_id: input_boolean.vacation_mode
-      state: 'off'
-    # - condition: time
-      # after: '23:00:00'
-      # before: '07:00:00'
-    - condition: template
-      value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
+    condition: time
+    after: '23:00:00'
+    before: '06:00:00'
   action:
-    - service: lifx.set_state
-      data:
-        entity_id:
-         - light.front_door
-        power: false
+    service: light.turn_off
+    entity_id: light.front_door
 - alias: Front Door Motion Turn on Light
   trigger:
     - platform: state
-      entity_id: binary_sensor.ring_front_door_motion
+      entity_id: binary_sensor.front_door_motion
       from: 'off'
       to: 'on'
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
       state: 'off'
-    # - condition: time
-      # after: '23:00:00'
-      # before: '07:00:00'
     - condition: template
-      value_template: "{{ not is_state('sensor.sleep_mode', 'awake') }}"
+      value_template: "{{ is_state('sensor.sleep_mode', 'all sleep') }}"
   action:
-    - service: lifx.set_state
-      data:
-        entity_id:
-         - light.front_door
-        brightness: 255
-        transition: 15
-        power: true
-    - service: notify.me
-      data:
-        message: 'Front Door Motion detected at {{now().strftime("%I:%M %p")}}'
+    - service: light.turn_off
+      entity_id: light.front_door
+- id: front_door_light_off_time
+  alias: "Front Door Light off at 7am"
+  trigger:
+    - platform: time
+      at: '07:00:00'
+  action:
+    service: light.turn_off
+    entity_id: light.front_door

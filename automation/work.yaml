@@ -1,39 +1,97 @@
-- id: me_leaving_work_alexa
-  alias: "I Just Left Work"
-  trigger:
-    platform: zone
-    entity_id: device_tracker.me_phone
-    zone: zone.work
-    event: leave
-  condition:
-    - condition: and
-      conditions:
-        - condition: state
-          entity_id: 'binary_sensor.workday_sensor'
-          state: 'on'
-        - condition: time
-          after: '15:30:00'
-  action:
-    - service: notify.me_alexa
-      data_template:
-        message: "{{states.sensor.my_name.state}} just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
-        title: "Arrive at Home"
-    - service: joaoapps_join.s8_send_sms
-      data_template:
-        message: "{{states.sensor.my_name.state}} just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
-        number: !secret wife_phone
-- id: im_going_to_work
-  alias: "I'm Going to Work"
-  trigger:
-    platform: time
-    at: '07:45:00'
-  condition:
-    - condition: state
-      entity_id: 'binary_sensor.workday_sensor'
-      state: 'on'
-  action:
-    - service: notify.me
-      data:
-        title: "Arrive at Work"
-        message: "{{states.sensor.my_morning_commute.state}} minutes to get to work."
-        data: {"icon":"http://goo.gl/AU4Wf1"}
+# - id: me_leaving_work_alexa
+  # alias: "I Just Left Work"
+  # trigger:
+    # platform: zone
+    # entity_id: device_tracker.me_phone
+    # zone: zone.work
+    # event: leave
+  # condition:
+    # - condition: and
+      # conditions:
+        # - condition: state
+          # entity_id: 'binary_sensor.workday_sensor'
+          # state: 'on'
+        # - condition: time
+          # after: '15:30:00'
+  # action:
+    # - service: notify.me_alexa
+      # data_template:
+        # message: "{{states.sensor.my_name.state}} just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
+        # title: "Arrive at Home"
+    # - service: joaoapps_join.s8_send_sms
+      # data_template:
+        # message: "{{states.sensor.my_name.state}} just left work, should be home at {{ (as_timestamp(now()) + (states('sensor.my_evening_commute') | int) * 60) | timestamp_custom('%I:%M %p') }}"
+        # number: !secret wife_phone
+# - id: im_going_to_work
+  # alias: "I'm Going to Work"
+  # trigger:
+    # platform: time
+    # at: '07:45:00'
+  # condition:
+    # - condition: state
+      # entity_id: 'binary_sensor.workday_sensor'
+      # state: 'on'
+  # action:
+    # - service: notify.me
+      # data:
+        # title: "Arrive at Work"
+        # message: "{{states.sensor.my_morning_commute.state}} minutes to get to work."
+    # - service: notify.me
+      # data:
+        # title: "Arrive at Work"
+        # message: "{{states.sensor.my_morning_commute.state}} minutes to get to work."
+        # data:
+          # photo:
+          # - url: http://www.dot.ri.gov/img/travel/camimages/37-5%20Rt%2037%20W%20@%20Post%20Rd.jpg
+          # - url: http://www.dot.ri.gov/img/travel/camimages/295_06.4_M_CAM%20Exit%206%20-%20Rt%2014.jpg
+          # - url: http://dot.ri.gov/img/travel/camimages/37-1%20Rt%2037%20W%20@%20I-295.jpg
+# - id: wife_going_to_work_commute
+  # alias: "Wife Going to Work Commute"
+  # trigger:
+    # platform: time
+    # at: '04:45:00'
+  # condition:
+    # - condition: state
+      # entity_id: 'sensor.wife_work_day'
+      # state: 'True'
+  # action:
+    # - service: notify.wife
+      # data:
+        # title: "Arrive at Work"
+        # message: "{{states.sensor.wife_morning_commute.state}} minutes to get to work."
+    # - service: notify.wife
+      # data:
+        # title: "Arrive at Work"
+        # message: "{{states.sensor.wife_morning_commute.state}} minutes to get to work."
+        # data:
+          # photo:
+          # - url: http://www.dot.ri.gov/img/travel/camimages/37-5%20Rt%2037%20W%20@%20Post%20Rd.jpg
+          # - url: http://www.dot.ri.gov/img/travel/camimages/95-18%20I-95%20N%20@%20Thurbers%20Ave.jpg
+# - id: wife_going_to_work_light_on
+  # alias: "Wife Going to Work Light On"
+  # trigger:
+    # platform: time
+    # at: '04:30:00'
+  # condition:
+    # - condition: state
+      # entity_id: 'sensor.wife_work_day'
+      # state: 'True'
+  # action:
+    # - service: automation.turn_off
+      # entity_id: automation.kitchen_stove_light_turn_off_after_10_minutes
+    # - service: light.turn_on
+      # entity_id: light.stove_light
+# - id: wife_going_to_work_light_off
+  # alias: "Wife Going to Work Light Off"
+  # trigger:
+    # platform: time
+    # at: '05:00:00'
+  # condition:
+    # - condition: state
+      # entity_id: 'sensor.wife_work_day'
+      # state: 'True'
+  # action:
+    # - service: automation.turn_on
+      # entity_id: automation.kitchen_stove_light_turn_off_after_10_minutes
+    # - service: light.turn_off
+      # entity_id: light.stove_light

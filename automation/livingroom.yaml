@@ -1,3 +1,45 @@
+#
+# Front Door
+#
+
+- alias: Front Door Opened
+  id: 'front_door_opened'
+  trigger: 
+  - platform: state
+    entity_id: binary_sensor.front_door_sensor_contact
+    to: 'on'
+  action:
+  - service: notify.family
+    data:
+      message: 'Front Door opened at {{now().strftime("%I:%M %p")}}'
+- id: front_door_opened_overnight
+  alias: "Front Door Opened Overnight"
+  trigger:
+      platform: state
+      entity_id: binary_sensor.front_door_sensor_contact
+      to: 'on'
+  condition:
+    condition: or
+    conditions:
+      - condition: time
+        after: '23:00:00'
+      - condition: time
+        before: '07:00:00'
+  action:
+    - service: notify.alexa_media
+      data_template:
+        target: 
+          - media_player.basement_dot
+          - media_player.living_room_show
+          - media_player.parent_s_bedroom_dot
+        message: "The front door is opened"
+        data:
+          type: "announce"
+
+#
+# Living Room Light
+#
+
 - id: livingroom_light_off_time
   alias: "Living Room Lamp off at 11pm"
   initial_state: True
@@ -24,7 +66,7 @@
     entity_id: light.living_room
     data_template:
       brightness: 90
-      rgb_color: [255,162,71]
+      rgb_color: [255,192,141]
 - id: livingroom_light_on_light_7am
   alias: "7am Living Room Lamp turn on based on ambient light sensor"
   initial_state: True
@@ -36,13 +78,13 @@
     conditions:
       - condition: numeric_state
         entity_id: 'sensor.sunlight_pct'
-        below: '10'
+        below: 10
   action:
     service: light.turn_on
     entity_id: light.living_room
     data_template:
       brightness: 90
-      rgb_color: [255,162,71]
+      rgb_color: [255,192,141]
 - id: livingroom_light_off_light
   alias: "Living Room Lamp turn off based on ambient light sensor"
   initial_state: True
@@ -60,3 +102,53 @@
   action:
     service: light.turn_off
     entity_id: light.living_room
+
+#
+# First Floor Heat
+#
+
+- alias: Turn on First Floor Heat AM
+  trigger:
+    - platform: time
+      at: '06:15:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.current_temp
+        below: 50
+      - condition: state
+        entity_id: binary_sensor.dining_room_slider_contact
+        state: 'off'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.first_floor_heat
+        temperature: 65
+        hvac_mode: heat
+- alias: Turn on First Floor Heat temp outside
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.current_temp
+      below: 50
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        after: '06:15:00'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.first_floor_heat
+        temperature: 65
+        hvac_mode: heat
+- alias: Reset First Floor Heat
+  trigger:
+    - platform: time
+      at: '20:00:00'
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.first_floor_heat
+        temperature: 62
+        hvac_mode: heat

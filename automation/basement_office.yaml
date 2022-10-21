@@ -22,8 +22,6 @@
   action:
     service: light.turn_on
     entity_id: light.office_desk_lamp
-    data_template:
-      brightness: 90
 - id: office_light_off_light
   alias: "Office Desk Light turn off based on ambient light sensor"
   initial_state: True
@@ -45,12 +43,11 @@
 #########################
 # Alerts
 #########################
-- alias: Motion in Kids Room
+- alias: Front Bedroom door opened
   trigger:
-    platform: event
-    event_type: ifttt_webhook_received
-    event_data:
-      action: call_service
+    platform: state
+    entity_id: binary_sensor.front_bedroom_door_contact
+    to: 'on'
   action:
     - service: YEELIGHT.START_FLOW
       data:

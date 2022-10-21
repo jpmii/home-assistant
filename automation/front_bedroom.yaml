@@ -2,63 +2,54 @@
 # Kids TV Outlet
 #
 
-- alias: Kids TV off
-  trigger:
-    - platform: time
-      at: '19:30:00'
-  condition:
-    - condition: state
-      entity_id: input_boolean.vacation_mode
-      state: 'off'
-  action:
-    - service: switch.turn_off
-      entity_id: switch.68102802dc4f22e873fa
-- alias: Kids TV On
-  trigger:
-    - platform: time
-      at: '07:00:00'
-  condition:
-    - condition: state
-      entity_id: input_boolean.vacation_mode
-      state: 'off'
-  action:
-    - service: switch.turn_on
-      entity_id: switch.68102802dc4f22e873fa
+# - alias: Kids TV off
+  # trigger:
+    # - platform: time
+      # at: '19:30:00'
+  # condition:
+    # - condition: state
+      # entity_id: input_boolean.vacation_mode
+      # state: 'off'
+  # action:
+    # - service: switch.turn_off
+      # entity_id: switch.basement_christmas_plug
+# - alias: Kids TV On
+  # trigger:
+    # - platform: time
+      # at: '07:00:00'
+  # condition:
+    # - condition: state
+      # entity_id: input_boolean.vacation_mode
+      # state: 'off'
+  # action:
+    # - service: switch.turn_on
+      # entity_id: switch.basement_christmas_plug
 
 #
 # Kids Light
 #
 
-#- alias: Kids Light ready to go for school day
-#  trigger:
-#    - platform: time
-#      at: '06:30:00'
-#  condition:
-#    - condition: state
-#      entity_id: input_boolean.vacation_mode
-#      state: 'off'
-#    - condition: state
-#      entity_id: sensor.school_day
-#      state: 'True'
-#  action:
-#    - service: lifx.set_state
-#      data_template:
-#        entity_id:
-#         - light.kids_light
-#        brightness: 100
-#        rgb_color: ["{{range(256)|random}}","{{range(256)|random}}","{{range(256)|random}}"]
-#        transition: 15
-- alias: Kids Light ready to go for off day
+- alias: Kids Light ready to go for tomorrow
   trigger:
     - platform: time
-      at: '07:00:00'
+      at: '14:30:00'
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
       state: 'off'
-#    - condition: state
-#      entity_id: sensor.school_day
-#      state: 'False'
+  action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.kids_light
+        time: '{% if is_state("sensor.school_day_off_tomorrow", "False") %}06:30:00{% else %}07:30:00{% endif %}'
+- alias: Kids Light ready to go for the day (dynamic time)
+  trigger:
+    - platform: time
+      at: input_datetime.kids_light
+  condition:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
   action:
     - service: lifx.set_state
       data_template:
@@ -70,8 +61,9 @@
         transition: 15
 - alias: Kids Light back to normal
   trigger:
-    - platform: time
-      at: '07:15:00'
+    - platform: template
+      value_template: >
+        {{ as_timestamp(now()) | timestamp_custom('%X', True) == (((state_attr('input_datetime.kids_light' , 'timestamp')) + (15 * 60))|timestamp_custom('%H:%M:%S', false)) }}
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
@@ -82,13 +74,14 @@
         entity_id:
          - light.kids_light
         brightness: 255
-        color_temp: 285
-        white_value: 255
+        rgb_color: ["255","255","255"]
         transition: 15
+# {{ as_timestamp(states('sensor.date_time').replace(',', '')) == ( state_attr('input_datetime.kids_light', 'timestamp') + 2700 ) }}
 - alias: Kids Light turn off
   trigger:
-    - platform: time
-      at: '07:45:00'
+  - platform: template
+    value_template: >
+      {{ as_timestamp(now()) | timestamp_custom('%X', True) == (((state_attr('input_datetime.kids_light' , 'timestamp')) + (45 * 60))|timestamp_custom('%H:%M:%S', false)) }}
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
@@ -115,19 +108,18 @@
          - light.kids_light
         power: True
         brightness: 25
-        color_temp: 285
-        white_value: 255
+        rgb_color: [255,255,255]
         transition: 15
 - alias: Kids Light warning for bed
   trigger:
     - platform: time
-      at: '19:10:00'
+      at: '20:30:00'
   condition:
     - condition: state
       entity_id: input_boolean.vacation_mode
       state: 'off'
   action:
-    - service: light.lifx_effect_pulse
+    - service: lifx.effect_pulse
       data:
         entity_id:
          - light.kids_light
@@ -151,8 +143,7 @@
          - light.kids_light
         power: True
         brightness: 5
-        color_temp: 285
-        white_value: 255
+        rgb_color: [255,255,255]
         transition: 15
 - id: kids_light_off_time
   alias: "Kids Light off at 9pm"
@@ -183,13 +174,74 @@
   action:
     service: light.turn_off
     entity_id: light.kids_light
-# - alias: Motion in Kids Room - Turn on Kitchen
-  # trigger:
-    # platform: event
-    # event_type: ifttt_webhook_received
-    # event_data:
-      # action: call_service
-  # action:
-    # - service: light.turn_on
-      # data:
-        # entity_id: light.stove_light
+
+#
+# Kids Door Opened
+#
+
+- alias: Front Bedroom door opened overnight
+  trigger:
+    platform: state
+    entity_id: binary_sensor.front_bedroom_door_contact
+    to: 'on'
+  condition:
+    condition: or
+    conditions:
+      - condition: time
+        after: '21:00:00'
+      - condition: sun
+        before: sunrise
+  action:
+    - service: switch.turn_on
+      entity_id: switch.kids_bathroom_fan
+    - service: light.turn_on
+      entity_id: light.kids_light
+- alias: Front Bedroom door closed overnight (30 seconds)
+  trigger:
+    platform: state
+    entity_id: binary_sensor.front_bedroom_door_contact
+    to: 'off'
+    for:
+      seconds: 30
+  condition:
+    condition: or
+    conditions:
+      - condition: time
+        after: '21:00:00'
+      - condition: sun
+        before: sunrise
+  action:
+    - service: switch.turn_off
+      entity_id: switch.kids_bathroom_fan
+- alias: Front Bedroom door closed overnight (3 minutes)
+  trigger:
+    platform: state
+    entity_id: binary_sensor.front_bedroom_door_contact
+    to: 'off'
+    for:
+      minutes: 3
+  condition:
+    condition: or
+    conditions:
+      - condition: time
+        after: '21:00:00'
+      - condition: sun
+        before: sunrise
+  action:
+    - service: light.turn_off
+      entity_id: light.kids_light
+- id: kids_light_off_overnight
+  alias: "Kids Light turn off after 5 minutes (Overnight)"
+  trigger:
+    platform: state
+    entity_id: light.stove_light
+    to: 'on'
+    for:
+      minutes: 5
+  condition:
+    condition: time
+    after: '23:00:00'
+    before: '06:00:00'
+  action:
+    - service: light.turn_off
+      entity_id: light.stove_light

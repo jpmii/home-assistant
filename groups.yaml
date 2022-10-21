@@ -7,10 +7,30 @@
     name: Livingroom Lights
     entities:
       - light.living_room
-      - switch.68102802dc4f22ef95b7
+      - switch.christmas_plug
   people:
     name: People & Devices
     entities:
       - device_tracker.me_phone 
       - device_tracker.me_android
       - device_tracker.wife_iphone
+  living_area_alexas:
+    name: Living Area Alexas
+    entities:
+      - media_player.basement_dot
+      - media_player.living_room_show
+      - media_player.parent_s_bedroom_dot
+  battery_levels:
+    name: Battery Level Monitor
+    entities:
+      - sensor.basement_hall_battery_level
+      - sensor.first_alert_brk_brands_inc_zcombo_smoke_and_carbon_monoxide_detector_battery_level
+      - sensor.dinning_door_battery
+      - sensor.first_floor_heat_battery_level
+      - sensor.basement_thermostat_battery
+      - sensor.x00158d0002461b30_battery
+      - sensor.outpipe_wl_battery
+      - sensor.water_heater_wl_battery
+      - sensor.battery_basement_slider_water_leak
+      - sensor.front_door_battery
+      - sensor.dryer_vibration_sensor_battery

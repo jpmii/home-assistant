@@ -1,13 +1,21 @@
   - platform: generic
-    still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?station=BOX&brand=wui&num=6&delay=15&type=N0R&frame=0&scale=1.000&noclutter=1&showstorms=0&mapx=400&mapy=240&centerx=400&centery=240&transx=0&transy=0&showlabels=1&severe=0&rainsnow=1&lightning=1&smooth=1&rand=25536562&lat=0&lon=0&label=you
+    still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?num=6&amp;type=N0Q&amp;mapx=400&amp;mapy=240&amp;brand=wui&amp;delay=15&amp;frame=0&amp;scale=0.25&amp;transx=0&amp;transy=0&amp;severe=0&amp;smooth=0&amp;centerx=400&amp;centery=240&amp;station=BOX&amp;rainsnow=0&amp;lightning=0&amp;noclutter=0&amp;showlabels=1&amp;showstorms=0&amp;rand=27404220"
     name: BOS Weather Radar
-  - platform: generic
-    still_image_url: http://www.dot.ri.gov/img/travel/camimages/37-5%20Rt%2037%20W%20@%20Post%20Rd.jpg
-    name: RT. 37 Towards Warwick
   - platform: generic
     still_image_url: http://dot.ri.gov/img/travel/camimages/37-1%20Rt%2037%20W%20@%20I-295.jpg
     name: 295 Exit 1
   - platform: generic
-    still_image_url: http://dot.ri.gov/img/travel/camimages/295-06.4-M-CAM%20Exit%206%20-%20Rt%2014.jpg
+    still_image_url: http://www.dot.ri.gov/img/travel/camimages/295_06.4_M_CAM%20Exit%206%20-%20Rt%2014.jpg
     name: 295 Exit 6
-  - platform: ring
+  - platform: generic
+    still_image_url: http://www.dot.ri.gov/img/travel/camimages/95-18%20I-95%20N%20@%20Thurbers%20Ave.jpg
+    name: 95 Thurbers Avenue
+  - platform: generic
+    still_image_url: http://www.dot.ri.gov/img/travel/camimages/95-22b%20I-95%20N%20@%20Kinsley%20Ave.jpg
+    name: 95 Kinsley Avenue
+  - platform: generic
+    still_image_url: http://www.dot.ri.gov/img/travel/camimages/37-5%20Rt%2037%20W%20@%20Post%20Rd.jpg
+    name: RT. 37 On ramp
+  - platform: generic
+    still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?num=6&type=N0Q&mapx=400&mapy=240&brand=wui&delay=15&frame=0&scale=1&transx=0&transy=0&severe=0&smooth=0&centerx=400&centery=240&station=BOX&rainsnow=0&lightning=0&noclutter=0&showlabels=1&showstorms=0&rand=27399876
+    name: CT Area Weather Radar

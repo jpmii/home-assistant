@@ -21,15 +21,12 @@ device_tracker:
       me_phone: !secret my_phone_ip
       wife_iphone: !secret wife_phone_ip
 
-media_player:
-  - platform: samsungtv
-    host: !secret livingroom_tv_ip
-    port: 8001
-    mac: 64:1c:b0:1f:39:63
+samsungtv:
+  - host: !secret livingroom_tv_ip
 
-zwave:
-  usb_path: /dev/ttyACM1
-  network_key: "0x84, 0xEA, 0x5D, 0xCF, 0x28, 0xFC, 0x1F, 0x6B, 0x7C, 0xD1, 0xF3, 0xDD, 0xDE, 0xA6, 0x3D, 0xB2"
+#zwave:
+#  usb_path: /dev/ttyACM1
+#  network_key: "0x84, 0xEA, 0x5D, 0xCF, 0x28, 0xFC, 0x1F, 0x6B, 0x7C, 0xD1, 0xF3, 0xDD, 0xDE, 0xA6, 0x3D, 0xB2"
 
 telegram_bot:
   - platform: polling
@@ -56,18 +53,26 @@ notify:
     services:
       - service: alexa
       - service: me
+  - platform: group
+    name: family
+    services:
+      - service: me
+      - service: wife
+  - platform: alexa_media
+    name: alexa_media
 
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  # include_used_components: true
+sonoff:
+  username: !secret me_email
+  password: !secret sonoff_password
+  reload: always
 
-# Discover some devices automatically
+default_config:
+
+mobile_app:
+
 discovery:
+
+ios:
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -91,10 +96,6 @@ sensor: !include sensors.yaml
 weather:
   - platform: darksky
     api_key: !secret darksky_api
-# Text to speech
-tts:
-  - platform: google_translate
-    service_name: google_say
 
 # Cloud
 cloud: !include cloud.yaml
@@ -114,32 +115,32 @@ yeelight:
     192.168.1.207:
       name: Office Desk Lamp
 
-google:
-  client_id: !secret googlecal_id
-  client_secret: !secret googlecal_secret
-  
-# androidtv:
-  # name: Kid's TV
-  # host:
-
 group: !include groups.yaml
 camera: !include cameras.yaml
 switch: !include switch.yaml
 scene: !include_dir_merge_list scene
-automation: !include_dir_merge_list automation
+alert: !include alerts.yaml
 input_boolean: !include input_boolean.yaml
 input_select: !include input_select.yaml
+input_datetime: !include input_datetime.yaml
 script: !include scripts.yaml
 zone: !include zones.yaml
-timer:
-  dryer:
-    name: Dryer Timer
-    duration: '00:90:00'
-    icon: mdi:washing-machine
+counter:
+  dryer_vibration_counter:
+    initial: 0
+    step: 1
+
 
 system_health:
+
+# icloud:
+  # - username: !secret wife_email
+    # password: !secret wife_icloud_password
+    # with_family: true
 
 # logger:
   # default: info
   # logs:
     # homeassistant.components.media_player.cast: debug
+
+automation: !include_dir_merge_list automation

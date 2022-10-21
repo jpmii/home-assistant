@@ -2,11 +2,13 @@
     entities:
       media_player.samsung_tv_remote:
         state: off
-      switch.68102802dc4f22ef95b7:
+      switch.christmas_plug:
+        state: off
+      switch.basement_christmas_plug:
         state: off
       light.living_room:
         state: off
-      switch.master_bedroom_closet:
+      switch.master_bedroom_closet_button:
         state: off
       switch.basement_stairs:
         state: off

@@ -1,29 +1,77 @@
-- alias: Dryer sense stop
-  id: 'dryersensestop'
-  trigger: 
-  - platform: state
-    entity_id: binary_sensor.dryer_status
-    to: 'off'
-    for:
-      minutes: 2
+- id: dryer_count_vibration
+  alias: Laundry - Dryer Count (Vibration)
+  trigger:
+    - platform: template
+      value_template: "{{(states.sensor.dryer_vibration_sensor_action.state | int) > 0}}"
+  condition:
+    - condition: state
+      entity_id: input_boolean.dryer_on
+      state: 'off'
   action:
-  - service: notify.me
-    data:
-      message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
-  - service: notify.wife
-    data_template:
-      message: 'Ello! The dryer has stopped at {{now().strftime("%I:%M %p")}}'
-# - alias: Dryer sense stop tell Alexa
-  # id: 'dryersensestopalexa'
-  # trigger: 
-  # - platform: state
-    # entity_id: binary_sensor.dryer_status
-    # to: 'off'
-  # condition:
-  # - condition: state
-    # entity_id: 'sensor.sleep_mode'
-    # state: 'awake'
-  # action:
-  # - service: notify.me_alexa
-    # data:
-      # message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
+    - service: counter.increment
+      target:
+        entity_id: counter.dryer_vibration_counter
+    - service: notify.me
+      data:
+        message: 'The dryer counter increased'
+- alias: Laundry - Dryer Count Reset
+  id: dryer_count_reset
+  trigger: 
+    - platform: template
+      value_template: "{{(((as_timestamp(now()) - as_timestamp(states.counter.dryer_vibration_counter.last_changed)) / 60) | round(0)) > 3}}"
+  condition:
+    - condition: numeric_state
+      entity_id: counter.dryer_vibration_counter
+      above: 0
+  action:
+    - service: notify.me
+      data:
+        message: 'The dryer counter reset'
+    - service: counter.reset
+      entity_id: counter.dryer_vibration_counter
+- id: dryer_start_vibration
+  alias: Laundry - Dryer Start (Counter)
+  trigger:
+    - platform: numeric_state
+      entity_id: counter.dryer_vibration_counter
+      above: 5
+  condition:
+    - condition: state
+      entity_id: input_boolean.dryer_on
+      state: 'off'
+  action:
+    - entity_id: input_boolean.dryer_on
+      service: input_boolean.turn_on
+- alias: Laundry - Dryer stop (Vibration)
+  id: dryer_stop_vibration
+  trigger: 
+    - platform: template
+      value_template: "{{(((as_timestamp(now()) - as_timestamp(states.sensor.dryer_vibration_sensor_action.last_changed)) / 60) | round(0)) > 3}}"
+  condition:
+    - condition: state
+      entity_id: input_boolean.dryer_on
+      state: 'on'
+  action:
+    - service: notify.me
+      data:
+        message: 'The dryer has stopped at {{now().strftime("%I:%M %p")}}'
+    - service: notify.wife
+      data_template:
+        message: 'Ello! The dryer has stopped at {{now().strftime("%I:%M %p")}} and is currently trying to start a hoedown.'
+    - entity_id: input_boolean.dryer_on
+      service: input_boolean.turn_off
+- alias: Laundry - Washing Machine stop
+  id: washing_machine_stop
+  trigger: 
+    - platform: numeric_state
+      entity_id: sensor.washing_machine_power
+      below: 2.2
+      for:
+        minutes: 1
+  action:
+    - service: notify.me
+      data:
+        message: 'The washing machine has stopped at {{now().strftime("%I:%M %p")}}'
+    - service: notify.wife
+      data_template:
+        message: 'Ello! The Washing Machine has stopped at {{now().strftime("%I:%M %p")}} and is currently playing a musical'

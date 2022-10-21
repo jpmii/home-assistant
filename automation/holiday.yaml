@@ -1,3 +1,71 @@
+- alias: Update Holiday Color Options
+  trigger:
+    - platform: state
+      entity_id: input_select.holiday
+    - platform: homeassistant
+      event: start
+  action:
+      service: input_select.set_options
+      data_template:
+        entity_id: input_select.holiday_colors
+        options: >
+          {% if states.input_select.holiday.state == 'Halloween' %}
+            ["orange", "mediumpurple"]
+          {% elif states.input_select.holiday.state == 'Christmas' %}
+            ["red", "darkgreen", "gold"]
+          {% else %}
+            ["white"]
+          {% endif %}
+- alias: Update Holiday Song Options
+  trigger:
+    - platform: state
+      entity_id: input_select.holiday
+    - platform: homeassistant
+      event: start
+  action:
+      service: input_select.set_options
+      data_template:
+        entity_id: input_select.holiday_songs
+        options: >
+          {% if states.input_select.holiday.state == 'Halloween' %}
+            ["This is Halloween by Danny Elfman", "You make me feel like it's Halloween by Muse", "I'm your Boogieman by White Zombie"]
+          {% elif states.input_select.holiday.state == 'Christmas' %}
+            ["Christmas Eve Sarajevo by Trans-Siberian Orchestra", "Cold December Night by Michael Buble", "Believe by Josh Groban"]
+          {% else %}
+            ["Smells like Teenspirit by Malia J"]
+          {% endif %}
+- alias: Pick Holiday Options for the Day
+  trigger:
+    - platform: time
+      at: '01:00:00'
+  condition:
+    alias: holday set
+    or:
+      - condition: state
+        entity_id: input_select.holiday
+        state: 'Christmas'
+      - condition: state
+        entity_id: input_select.holiday
+        state: 'Halloween'
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.holiday_colors
+      data:
+        option: >
+          {{ state_attr('input_select.holiday_colors', 'options')
+              | reject('eq', states('input_select.holiday_colors'))
+              | list | random }}
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.holiday_songs
+      data:
+        option: >
+          {{ state_attr('input_select.holiday_songs', 'options')
+              | reject('eq', states('input_select.holiday_songs'))
+              | list | random }}
+
+
 - alias: Outside Lights On
   trigger:
     - platform: sun
@@ -18,6 +86,23 @@
   action:
     - service: switch.turn_on
       entity_id: switch.outdoor_right_yard
+    - service: light.turn_on
+      target:
+        entity_id: light.front_door
+      data:
+        color_name: "{{ states('input_select.holiday_colors') }}"
+    - service: notify.alexa_media
+      data_template:
+        target: 
+          - media_player.living_room_show
+        message: "The outside lights have turned on"
+        data:
+          type: "announce"
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.living_room_show
+        media_content_id : "play {{ states('input_select.holiday_songs') }}"
+        media_content_type: "SPOTIFY"
 
 - alias: Outside Lights Off
   trigger:
@@ -53,7 +138,13 @@
       state: 'Christmas'
   action:
     - service: switch.turn_on
-      entity_id: switch.68102802dc4f22ef95b7
+      entity_id: switch.christmas_plug
+    - service: switch.turn_on
+      entity_id: switch.christmas_plug
+    - service: switch.turn_on
+      entity_id: switch.basement_christmas_plug
+    - service: switch.turn_on
+      entity_id: switch.basement_christmas_plug
 
 - alias: Holiday - Christmas Lighting Off
   trigger:
@@ -68,4 +159,6 @@
       state: 'Christmas'
   action:
     - service: switch.turn_off
-      entity_id: switch.68102802dc4f22ef95b7
+      entity_id: switch.christmas_plug
+    - service: switch.turn_off
+      entity_id: switch.basement_christmas_plug

@@ -1,0 +1,8 @@
+  kids_light:
+    name: Turn Kids Light on at
+    has_date: false
+    has_time: true
+  parents_alarm:
+    name: Turn on Alexa Wakeup List at
+    has_date: false
+    has_time: true
